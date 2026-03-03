@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserContextService, PlanService } from '../../services';
 
 /**
  * Home dashboard for the Team Lead.
@@ -11,10 +12,16 @@ import { Router } from '@angular/router';
     styleUrl: './home.component.css'
 })
 export class HomeComponent {
-    constructor(private router: Router) { }
+    private router = inject(Router);
+    userContext = inject(UserContextService);
+    planService = inject(PlanService);
 
-    /** Navigate to a given route. */
     goto(route: string): void {
         this.router.navigate([route]);
+    }
+
+    /** Get the user's display name. */
+    get userName(): string {
+        return this.userContext.currentUser()?.name ?? 'Leader';
     }
 }

@@ -2,21 +2,24 @@
     <h2 class="mb-sm">Who are you?</h2>
     <p class="text-secondary mb-lg">Click your name to get started.</p>
 
-    <div class="grid-3">
-        <div class="action-card login-card" (click)="selectUser('lead')">
-            <div class="avatar avatar-lg" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">A</div>
-            <h3>Alice</h3>
-            <span class="badge badge-client" style="font-size:0.65rem; margin-top:4px;">👑 LEAD</span>
-        </div>
-        <div class="action-card login-card" (click)="selectUser('member')">
-            <div class="avatar avatar-lg" style="background: linear-gradient(135deg, #3b82f6, #06b6d4);">B</div>
-            <h3>Bob</h3>
-            <span class="text-muted" style="font-size:0.75rem; margin-top:4px;">Member</span>
-        </div>
-        <div class="action-card login-card" (click)="selectUser('member')">
-            <div class="avatar avatar-lg" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">C</div>
-            <h3>Charlie</h3>
-            <span class="text-muted" style="font-size:0.75rem; margin-top:4px;">Member</span>
-        </div>
+    @if (teamService.members().length === 0) {
+    <div class="glass-card no-hover" style="text-align:center; padding:var(--space-xl);">
+        <p class="text-muted mb-md">No team members found.</p>
+        <a class="btn btn-primary" routerLink="/welcome">Set Up Team First</a>
     </div>
+    } @else {
+    <div class="grid-3">
+        @for (member of teamService.members(); track member.id; let i = $index) {
+        <div class="action-card login-card" (click)="selectUser(member)" id="login-{{ member.id }}">
+            <div class="avatar avatar-lg" [style.background]="getGradient(i)">{{ getInitial(member.name) }}</div>
+            <h3>{{ member.name }}</h3>
+            @if (member.role === 'Lead') {
+            <span class="badge badge-client" style="font-size:0.65rem; margin-top:4px;">👑 LEAD</span>
+            } @else {
+            <span class="text-muted" style="font-size:0.75rem; margin-top:4px;">Member</span>
+            }
+        </div>
+        }
+    </div>
+    }
 </section>

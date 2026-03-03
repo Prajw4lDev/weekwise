@@ -4,13 +4,20 @@
         <span class="text-gradient">Weekwise</span>
     </div>
     <div class="navbar-actions">
+        @if (userContext.isLoggedIn()) {
         <div class="navbar-user" (click)="switchUser()" style="cursor:pointer;" title="Switch user">
             <div class="avatar"
                 style="background: linear-gradient(135deg, #6366f1, #8b5cf6); width:28px; height:28px; font-size:0.75rem;">
-                A</div>
-            <span>Alice</span>
+                {{ getInitial() }}</div>
+            <span>{{ userContext.currentUser()?.name }}</span>
+            @if (userContext.isLead()) {
+            <span class="badge badge-client" style="font-size:0.55rem; padding:2px 6px;">LEAD</span>
+            }
         </div>
-        <button class="btn btn-icon btn-ghost" title="Toggle Theme">🌙</button>
+        }
+        <button class="btn btn-icon btn-ghost" title="Toggle Theme" (click)="toggleTheme()">
+            @if (themeService.isDark()) { 🌙 } @else { ☀️ }
+        </button>
         <button class="btn btn-icon btn-ghost" title="Home" (click)="goHome()">🏠</button>
     </div>
 </nav>

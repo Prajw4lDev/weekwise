@@ -1,8 +1,9 @@
 <section id="screen-home-lead">
-    <h2 class="mb-sm">Welcome back, <span class="text-gradient">Alice</span> 👋</h2>
+    <h2 class="mb-sm">Welcome back, <span class="text-gradient">{{ userName }}</span> 👋</h2>
     <p class="text-secondary mb-lg">What would you like to do today?</p>
 
     <div class="grid-auto">
+        @if (!planService.hasActivePlan()) {
         <div class="action-card" (click)="goto('/plan-setup')">
             <div class="action-icon">🚀</div>
             <div class="action-content">
@@ -10,11 +11,22 @@
                 <p>Set up a new planning cycle.</p>
             </div>
         </div>
+        }
+        @if (planService.planStatus() === 'Setup') {
         <div class="action-card" (click)="goto('/plan-setup')">
             <div class="action-icon">⚙️</div>
             <div class="action-content">
                 <h3>Set Up This Week's Plan</h3>
                 <p>Pick members and set category percentages.</p>
+            </div>
+        </div>
+        }
+        @if (planService.isPlanning()) {
+        <div class="action-card" (click)="goto('/my-plan')">
+            <div class="action-icon">📝</div>
+            <div class="action-content">
+                <h3>Plan My Work</h3>
+                <p>Pick backlog items and commit hours.</p>
             </div>
         </div>
         <div class="action-card" (click)="goto('/review')">
@@ -24,11 +36,13 @@
                 <p>Check everyone's hours and lock the plan.</p>
             </div>
         </div>
-        <div class="action-card" (click)="goto('/my-plan')">
-            <div class="action-icon">📝</div>
+        }
+        @if (planService.isFrozen()) {
+        <div class="action-card" (click)="goto('/update-progress')">
+            <div class="action-icon">✏️</div>
             <div class="action-content">
-                <h3>Plan My Work</h3>
-                <p>Pick backlog items and commit hours.</p>
+                <h3>Update My Progress</h3>
+                <p>Report hours and status on your tasks.</p>
             </div>
         </div>
         <div class="action-card" (click)="goto('/progress')">
@@ -38,13 +52,6 @@
                 <p>Check how the team is doing.</p>
             </div>
         </div>
-        <div class="action-card" (click)="goto('/update-progress')">
-            <div class="action-icon">✏️</div>
-            <div class="action-content">
-                <h3>Update My Progress</h3>
-                <p>Report hours and status on your tasks.</p>
-            </div>
-        </div>
         <div class="action-card">
             <div class="action-icon">✅</div>
             <div class="action-content">
@@ -52,6 +59,7 @@
                 <p>Close out this cycle.</p>
             </div>
         </div>
+        }
         <div class="action-card" (click)="goto('/backlog')">
             <div class="action-icon">📋</div>
             <div class="action-content">
@@ -73,6 +81,7 @@
                 <p>Look at completed planning cycles.</p>
             </div>
         </div>
+        @if (planService.hasActivePlan()) {
         <div class="action-card" style="border-color: rgba(239,68,68,0.2);">
             <div class="action-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">🗑️</div>
             <div class="action-content">
@@ -80,5 +89,6 @@
                 <p>Erase all plans and start over.</p>
             </div>
         </div>
+        }
     </div>
 </section>

@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { ThemeService } from './services';
 
 /**
  * Root application component for Weekwise.
- * Level 1: Contains the navbar layout and router-outlet for page navigation.
+ * Level 4: Layout shell with theme initialization.
  */
 @Component({
   selector: 'app-root',
@@ -12,6 +13,11 @@ import { NavbarComponent } from './components/navbar/navbar.component';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit {
   title = 'Weekwise';
+  private themeService = inject(ThemeService);
+
+  ngOnInit(): void {
+    this.themeService.init();
+  }
 }
