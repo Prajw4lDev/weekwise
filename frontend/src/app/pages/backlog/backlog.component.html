@@ -1,52 +1,68 @@
 <section id="screen-backlog">
     <div class="flex items-center justify-between mb-lg">
         <h2><span class="icon">📋</span> Manage Backlog</h2>
-        <button class="btn btn-primary">+ Add Item</button>
+        <button class="btn btn-primary" (click)="openAddForm()" id="add-item-btn">+ Add Item</button>
     </div>
 
     <!-- Filter tabs -->
     <div class="filter-tabs mb-lg">
-        <button class="filter-tab active">All</button>
-        <button class="filter-tab">🟢 Client</button>
-        <button class="filter-tab">🟡 Tech Debt</button>
-        <button class="filter-tab">🔵 R&amp;D</button>
+        <button class="filter-tab" [class.active]="activeFilter === 'All'" (click)="setFilter('All')">All</button>
+        <button class="filter-tab" [class.active]="activeFilter === 'Client'" (click)="setFilter('Client')">🟢
+            Client</button>
+        <button class="filter-tab" [class.active]="activeFilter === 'TechDebt'" (click)="setFilter('TechDebt')">🟡 Tech
+            Debt</button>
+        <button class="filter-tab" [class.active]="activeFilter === 'RnD'" (click)="setFilter('RnD')">🔵
+            R&amp;D</button>
     </div>
 
     <!-- Add/Edit Form -->
+    @if (showForm) {
     <div class="glass-card no-hover mb-lg">
-        <h3 class="mb-md">New Backlog Item</h3>
+        <h3 class="mb-md">{{ editingItemId ? 'Edit Backlog Item' : 'New Backlog Item' }}</h3>
         <div class="grid-2 mb-md">
             <div class="form-group">
                 <label>Title</label>
-                <input type="text" class="form-input" placeholder="e.g. API Redesign">
+                <input type="text" class="form-input" placeholder="e.g. API Redesign" [(ngModel)]="formTitle"
+                    id="item-title">
             </div>
             <div class="form-group">
                 <label>Category</label>
-                <select class="form-input">
+                <select class="form-input" [(ngModel)]="formCategory" id="item-category">
                     <option value="">Select category...</option>
-                    <option value="client">🟢 Client Focused</option>
-                    <option value="techdebt">🟡 Tech Debt</option>
-                    <option value="rnd">🔵 R&amp;D</option>
+                    <option value="Client">🟢 Client Focused</option>
+                    <option value="TechDebt">🟡 Tech Debt</option>
+                    <option value="RnD">🔵 R&amp;D</option>
                 </select>
             </div>
         </div>
         <div class="grid-2 mb-md">
             <div class="form-group">
                 <label>Description</label>
-                <textarea class="form-input" placeholder="Describe the work item..."></textarea>
+                <textarea class="form-input" placeholder="Describe the work item..." [(ngModel)]="formDescription"
+                    id="item-description"></textarea>
             </div>
             <div class="form-group">
                 <label>Estimated Hours</label>
-                <input type="number" class="form-input" placeholder="e.g. 10" min="1">
+                <input type="number" class="form-input" placeholder="e.g. 10" min="1" [(ngModel)]="formEstimatedHours"
+                    id="item-hours">
             </div>
         </div>
         <div class="flex gap-sm">
-            <button class="btn btn-primary">Save Item</button>
-            <button class="btn btn-ghost">Cancel</button>
+            <button class="btn btn-primary" (click)="saveItem()" [disabled]="!isFormValid" id="save-item-btn">
+                {{ editingItemId ? 'Update Item' : 'Save Item' }}
+            </button>
+            <button class="btn btn-ghost" (click)="cancelForm()">Cancel</button>
         </div>
     </div>
+    }
 
     <!-- Backlog Table -->
+    @if (filteredItems.length === 0) {
+    <div class="glass-card no-hover" style="text-align:center; padding:var(--space-xl);">
+        <p class="text-muted mb-sm">No backlog items yet.</p>
+        <p class="text-secondary">Click <strong>"+ Add Item"</strong> to create your first work item.</p>
+    </div>
+    } @else {
     <div class="glass-card no-hover">
         <table class="data-table">
             <thead>
@@ -59,57 +75,24 @@
                 </tr>
             </thead>
             <tbody>
+                @for (item of filteredItems; track item.id) {
                 <tr>
-                    <td style="font-weight:600;">API Redesign</td>
-                    <td><span class="badge badge-client">🟢 Client</span></td>
-                    <td>10h</td>
-                    <td class="text-secondary">Redesign the REST API for v2 compatibility.</td>
+                    <td style="font-weight:600;">{{ item.title }}</td>
+                    <td><span class="badge" [class]="getCategoryClass(item.category)">{{ getCategoryLabel(item.category)
+                            }}</span></td>
+                    <td>{{ item.estimatedHours }}h</td>
+                    <td class="text-secondary">{{ item.description }}</td>
                     <td>
-                        <div class="flex gap-xs"><button class="btn btn-icon btn-ghost">✏️</button><button
-                                class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">🗑️</button></div>
+                        <div class="flex gap-xs">
+                            <button class="btn btn-icon btn-ghost" (click)="openEditForm(item)" title="Edit">✏️</button>
+                            <button class="btn btn-icon btn-ghost" style="color:var(--status-blocked);"
+                                (click)="deleteItem(item.id)" title="Delete">🗑️</button>
+                        </div>
                     </td>
                 </tr>
-                <tr>
-                    <td style="font-weight:600;">Refactor DB Layer</td>
-                    <td><span class="badge badge-techdebt">🟡 Tech Debt</span></td>
-                    <td>8h</td>
-                    <td class="text-secondary">Migrate from raw SQL to ORM patterns.</td>
-                    <td>
-                        <div class="flex gap-xs"><button class="btn btn-icon btn-ghost">✏️</button><button
-                                class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">🗑️</button></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="font-weight:600;">ML Model POC</td>
-                    <td><span class="badge badge-rnd">🔵 R&amp;D</span></td>
-                    <td>6h</td>
-                    <td class="text-secondary">Proof of concept for recommendation engine.</td>
-                    <td>
-                        <div class="flex gap-xs"><button class="btn btn-icon btn-ghost">✏️</button><button
-                                class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">🗑️</button></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="font-weight:600;">Dashboard Analytics</td>
-                    <td><span class="badge badge-client">🟢 Client</span></td>
-                    <td>12h</td>
-                    <td class="text-secondary">Build interactive charts for the analytics page.</td>
-                    <td>
-                        <div class="flex gap-xs"><button class="btn btn-icon btn-ghost">✏️</button><button
-                                class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">🗑️</button></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="font-weight:600;">CI/CD Pipeline Setup</td>
-                    <td><span class="badge badge-techdebt">🟡 Tech Debt</span></td>
-                    <td>5h</td>
-                    <td class="text-secondary">Automate build and deployment pipeline.</td>
-                    <td>
-                        <div class="flex gap-xs"><button class="btn btn-icon btn-ghost">✏️</button><button
-                                class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">🗑️</button></div>
-                    </td>
-                </tr>
+                }
             </tbody>
         </table>
     </div>
+    }
 </section>
