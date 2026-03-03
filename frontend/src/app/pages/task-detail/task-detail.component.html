@@ -1,0 +1,89 @@
+<section id="screen-task-detail">
+    <div class="flex items-center justify-between mb-lg">
+        <h2>API Redesign — Details</h2>
+        <button class="btn btn-ghost" (click)="goBack()">← Back to Progress</button>
+    </div>
+
+    <div class="glass-card no-hover mb-lg">
+        <div class="grid-2" style="gap:var(--space-md);">
+            <div class="flex items-center gap-sm">
+                <span class="text-muted" style="font-size:0.8rem; min-width:80px;">Category:</span>
+                <span class="badge badge-client">🟢 Client</span>
+            </div>
+            <div class="flex items-center gap-sm">
+                <span class="text-muted" style="font-size:0.8rem; min-width:80px;">Estimate:</span>
+                <span>10h</span>
+            </div>
+            <div class="flex items-center gap-sm">
+                <span class="text-muted" style="font-size:0.8rem; min-width:80px;">Assigned to:</span>
+                <span>Alice, Bob</span>
+            </div>
+            <div class="flex items-center gap-sm">
+                <span class="text-muted" style="font-size:0.8rem; min-width:80px;">Status:</span>
+                <span class="status-badge status-inprogress">● In Progress</span>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div>
+            <span class="text-muted" style="font-size:0.8rem;">Description:</span>
+            <p style="margin-top:4px;">Redesign the REST API for v2 compatibility. Includes new auth endpoints and
+                pagination.</p>
+        </div>
+    </div>
+
+    <h3 class="mb-md">All members assigned to this item</h3>
+    <div class="flex flex-col gap-sm mb-lg">
+        <div class="glass-card no-hover" style="padding:var(--space-md);">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-sm">
+                    <div class="avatar"
+                        style="background:linear-gradient(135deg,#6366f1,#8b5cf6);width:28px;height:28px;font-size:0.7rem;">
+                        A</div>
+                    <span>Alice</span>
+                </div>
+                <div class="flex items-center gap-md">
+                    <span>Committed: <strong>6h</strong></span>
+                    <span>Done: <strong style="color:var(--status-done);">6h</strong></span>
+                    <span class="status-badge status-done">● Done</span>
+                </div>
+            </div>
+        </div>
+        <div class="glass-card no-hover" style="padding:var(--space-md);">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-sm">
+                    <div class="avatar"
+                        style="background:linear-gradient(135deg,#3b82f6,#06b6d4);width:28px;height:28px;font-size:0.7rem;">
+                        B</div>
+                    <span>Bob</span>
+                </div>
+                <div class="flex items-center gap-md">
+                    <span>Committed: <strong>8h</strong></span>
+                    <span>Done: <strong style="color:var(--cat-techdebt);">6h</strong></span>
+                    <span class="status-badge status-inprogress">● In Progress</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mb-md">Update History</h3>
+    <div class="glass-card no-hover">
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-time">Mar 5, 2026 — 4:30 PM</div>
+                <div class="timeline-text">Bob: 6h done, In Progress — "Endpoints 80% done"</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">Mar 5, 2026 — 2:00 PM</div>
+                <div class="timeline-text">Alice: 6h done, Done — "All auth endpoints complete"</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">Mar 4, 2026 — 11:00 AM</div>
+                <div class="timeline-text">Bob: 3h done, In Progress — "Started pagination work"</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">Mar 4, 2026 — 9:00 AM</div>
+                <div class="timeline-text">Alice: 2h done, In Progress — "Working on auth endpoints"</div>
+            </div>
+        </div>
+    </div>
+</section>

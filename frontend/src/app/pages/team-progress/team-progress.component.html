@@ -1,0 +1,123 @@
+<section id="screen-team-progress">
+    <h2 class="mb-lg"><span class="icon">📊</span> Team Progress</h2>
+
+    <div class="grid-3 mb-lg">
+        <div class="stat-card">
+            <div class="stat-value text-gradient">62%</div>
+            <div class="stat-label">Overall Progress</div>
+            <div class="progress-bar-container mt-sm">
+                <div class="progress-bar-fill" style="width:62%;"></div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color:var(--status-done);">5 / 9</div>
+            <div class="stat-label">Tasks Done</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color:var(--status-blocked);">1</div>
+            <div class="stat-label">Blocked</div>
+        </div>
+    </div>
+
+    <h3 class="mb-md">By Category</h3>
+    <div class="grid-3 mb-lg">
+        <div class="glass-card no-hover" style="border-left:3px solid var(--cat-client);">
+            <span class="badge badge-client mb-sm">🟢 Client</span>
+            <div style="font-size:1.5rem; font-weight:800;">28h <span class="text-secondary"
+                    style="font-size:0.9rem; font-weight:400;">/ 45h</span></div>
+            <div class="progress-bar-container mt-sm">
+                <div class="progress-bar-fill green" style="width:62%;"></div>
+            </div>
+        </div>
+        <div class="glass-card no-hover" style="border-left:3px solid var(--cat-techdebt);">
+            <span class="badge badge-techdebt mb-sm">🟡 Tech Debt</span>
+            <div style="font-size:1.5rem; font-weight:800;">22h <span class="text-secondary"
+                    style="font-size:0.9rem; font-weight:400;">/ 27h</span></div>
+            <div class="progress-bar-container mt-sm">
+                <div class="progress-bar-fill amber" style="width:81%;"></div>
+            </div>
+        </div>
+        <div class="glass-card no-hover" style="border-left:3px solid var(--cat-rnd);">
+            <span class="badge badge-rnd mb-sm">🔵 R&amp;D</span>
+            <div style="font-size:1.5rem; font-weight:800;">6h <span class="text-secondary"
+                    style="font-size:0.9rem; font-weight:400;">/ 18h</span></div>
+            <div class="progress-bar-container mt-sm">
+                <div class="progress-bar-fill" style="width:33%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mb-md">By Member</h3>
+    <div class="glass-card no-hover">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Member</th>
+                    <th>Progress</th>
+                    <th>Hours</th>
+                    <th>Tasks Done</th>
+                    <th>Blocked</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="cursor:pointer;" (click)="viewDetail()">
+                    <td>
+                        <div class="flex items-center gap-sm">
+                            <div class="avatar"
+                                style="background:linear-gradient(135deg,#6366f1,#8b5cf6);width:28px;height:28px;font-size:0.7rem;">
+                                A</div>Alice
+                        </div>
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-sm">
+                            <div class="progress-bar-container" style="width:100px;">
+                                <div class="progress-bar-fill green" style="width:80%;"></div>
+                            </div><span style="font-size:0.85rem;">80%</span>
+                        </div>
+                    </td>
+                    <td>24h / 30h</td>
+                    <td>2 / 3</td>
+                    <td>0</td>
+                </tr>
+                <tr style="cursor:pointer;" (click)="viewDetail()">
+                    <td>
+                        <div class="flex items-center gap-sm">
+                            <div class="avatar"
+                                style="background:linear-gradient(135deg,#3b82f6,#06b6d4);width:28px;height:28px;font-size:0.7rem;">
+                                B</div>Bob
+                        </div>
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-sm">
+                            <div class="progress-bar-container" style="width:100px;">
+                                <div class="progress-bar-fill" style="width:53%;"></div>
+                            </div><span style="font-size:0.85rem;">53%</span>
+                        </div>
+                    </td>
+                    <td>16h / 30h</td>
+                    <td>1 / 3</td>
+                    <td>0</td>
+                </tr>
+                <tr style="cursor:pointer;" (click)="viewDetail()">
+                    <td>
+                        <div class="flex items-center gap-sm">
+                            <div class="avatar"
+                                style="background:linear-gradient(135deg,#f59e0b,#ef4444);width:28px;height:28px;font-size:0.7rem;">
+                                C</div>Charlie
+                        </div>
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-sm">
+                            <div class="progress-bar-container" style="width:100px;">
+                                <div class="progress-bar-fill amber" style="width:47%;"></div>
+                            </div><span style="font-size:0.85rem;">47%</span>
+                        </div>
+                    </td>
+                    <td>14h / 30h</td>
+                    <td>2 / 3</td>
+                    <td><span style="color:var(--status-blocked);font-weight:600;">1</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
