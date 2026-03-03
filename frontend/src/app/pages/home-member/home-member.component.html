@@ -1,0 +1,28 @@
+<section id="screen-home-member">
+    <h2 class="mb-sm">Welcome back, <span class="text-gradient">Bob</span> 👋</h2>
+    <p class="text-secondary mb-lg">Here's what you can do.</p>
+
+    <div class="grid-auto">
+        <div class="action-card" (click)="goto('/my-plan')">
+            <div class="action-icon">📝</div>
+            <div class="action-content">
+                <h3>Plan My Work</h3>
+                <p>Pick backlog items and commit your 30 hours.</p>
+            </div>
+        </div>
+        <div class="action-card" (click)="goto('/update-progress')">
+            <div class="action-icon">✏️</div>
+            <div class="action-content">
+                <h3>Update My Progress</h3>
+                <p>Report hours and status on your tasks.</p>
+            </div>
+        </div>
+        <div class="action-card" (click)="goto('/progress')">
+            <div class="action-icon">📊</div>
+            <div class="action-content">
+                <h3>See Team Progress</h3>
+                <p>See how the team is doing overall.</p>
+            </div>
+        </div>
+    </div>
+</section>

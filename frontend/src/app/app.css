@@ -1,0 +1,7 @@
+/* app.css — Component-level styles for the root app */
+/* Most styles live in the global styles.css design system */
+
+:host {
+    display: block;
+    min-height: 100vh;
+}

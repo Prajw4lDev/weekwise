@@ -1,0 +1,115 @@
+<section id="screen-backlog">
+    <div class="flex items-center justify-between mb-lg">
+        <h2><span class="icon">📋</span> Manage Backlog</h2>
+        <button class="btn btn-primary">+ Add Item</button>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs mb-lg">
+        <button class="filter-tab active">All</button>
+        <button class="filter-tab">🟢 Client</button>
+        <button class="filter-tab">🟡 Tech Debt</button>
+        <button class="filter-tab">🔵 R&amp;D</button>
+    </div>
+
+    <!-- Add/Edit Form -->
+    <div class="glass-card no-hover mb-lg">
+        <h3 class="mb-md">New Backlog Item</h3>
+        <div class="grid-2 mb-md">
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" class="form-input" placeholder="e.g. API Redesign">
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select class="form-input">
+                    <option value="">Select category...</option>
+                    <option value="client">🟢 Client Focused</option>
+                    <option value="techdebt">🟡 Tech Debt</option>
+                    <option value="rnd">🔵 R&amp;D</option>
+                </select>
+            </div>
+        </div>
+        <div class="grid-2 mb-md">
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-input" placeholder="Describe the work item..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Estimated Hours</label>
+                <input type="number" class="form-input" placeholder="e.g. 10" min="1">
+            </div>
+        </div>
+        <div class="flex gap-sm">
+            <button class="btn btn-primary">Save Item</button>
+            <button class="btn btn-ghost">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Backlog Table -->
+    <div class="glass-card no-hover">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Est. Hours</th>
+                    <th>Description</th>
+                    <th style="width:100px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="font-weight:600;">API Redesign</td>
+                    <td><span class="badge badge-client">🟢 Client</span></td>
+                    <td>10h</td>
+                    <td class="text-secondary">Redesign the REST API for v2 compatibility.</td>
+                    <td>
+                        <div class="flex gap-xs"><button class="btn btn-icon btn-ghost">✏️</button><button
+                                class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">🗑️</button></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;">Refactor DB Layer</td>
+                    <td><span class="badge badge-techdebt">🟡 Tech Debt</span></td>
+                    <td>8h</td>
+                    <td class="text-secondary">Migrate from raw SQL to ORM patterns.</td>
+                    <td>
+                        <div class="flex gap-xs"><button class="btn btn-icon btn-ghost">✏️</button><button
+                                class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">🗑️</button></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;">ML Model POC</td>
+                    <td><span class="badge badge-rnd">🔵 R&amp;D</span></td>
+                    <td>6h</td>
+                    <td class="text-secondary">Proof of concept for recommendation engine.</td>
+                    <td>
+                        <div class="flex gap-xs"><button class="btn btn-icon btn-ghost">✏️</button><button
+                                class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">🗑️</button></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;">Dashboard Analytics</td>
+                    <td><span class="badge badge-client">🟢 Client</span></td>
+                    <td>12h</td>
+                    <td class="text-secondary">Build interactive charts for the analytics page.</td>
+                    <td>
+                        <div class="flex gap-xs"><button class="btn btn-icon btn-ghost">✏️</button><button
+                                class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">🗑️</button></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;">CI/CD Pipeline Setup</td>
+                    <td><span class="badge badge-techdebt">🟡 Tech Debt</span></td>
+                    <td>5h</td>
+                    <td class="text-secondary">Automate build and deployment pipeline.</td>
+                    <td>
+                        <div class="flex gap-xs"><button class="btn btn-icon btn-ghost">✏️</button><button
+                                class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">🗑️</button></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>

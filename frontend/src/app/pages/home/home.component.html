@@ -1,0 +1,84 @@
+<section id="screen-home-lead">
+    <h2 class="mb-sm">Welcome back, <span class="text-gradient">Alice</span> 👋</h2>
+    <p class="text-secondary mb-lg">What would you like to do today?</p>
+
+    <div class="grid-auto">
+        <div class="action-card" (click)="goto('/plan-setup')">
+            <div class="action-icon">🚀</div>
+            <div class="action-content">
+                <h3>Start a New Week</h3>
+                <p>Set up a new planning cycle.</p>
+            </div>
+        </div>
+        <div class="action-card" (click)="goto('/plan-setup')">
+            <div class="action-icon">⚙️</div>
+            <div class="action-content">
+                <h3>Set Up This Week's Plan</h3>
+                <p>Pick members and set category percentages.</p>
+            </div>
+        </div>
+        <div class="action-card" (click)="goto('/review')">
+            <div class="action-icon">❄️</div>
+            <div class="action-content">
+                <h3>Review &amp; Freeze Plan</h3>
+                <p>Check everyone's hours and lock the plan.</p>
+            </div>
+        </div>
+        <div class="action-card" (click)="goto('/my-plan')">
+            <div class="action-icon">📝</div>
+            <div class="action-content">
+                <h3>Plan My Work</h3>
+                <p>Pick backlog items and commit hours.</p>
+            </div>
+        </div>
+        <div class="action-card" (click)="goto('/progress')">
+            <div class="action-icon">📊</div>
+            <div class="action-content">
+                <h3>See Team Progress</h3>
+                <p>Check how the team is doing.</p>
+            </div>
+        </div>
+        <div class="action-card" (click)="goto('/update-progress')">
+            <div class="action-icon">✏️</div>
+            <div class="action-content">
+                <h3>Update My Progress</h3>
+                <p>Report hours and status on your tasks.</p>
+            </div>
+        </div>
+        <div class="action-card">
+            <div class="action-icon">✅</div>
+            <div class="action-content">
+                <h3>Finish This Week</h3>
+                <p>Close out this cycle.</p>
+            </div>
+        </div>
+        <div class="action-card" (click)="goto('/backlog')">
+            <div class="action-icon">📋</div>
+            <div class="action-content">
+                <h3>Manage Backlog</h3>
+                <p>Add, edit, or browse work items.</p>
+            </div>
+        </div>
+        <div class="action-card" (click)="goto('/welcome')">
+            <div class="action-icon">👥</div>
+            <div class="action-content">
+                <h3>Manage Team Members</h3>
+                <p>Add or remove team members.</p>
+            </div>
+        </div>
+        <div class="action-card" (click)="goto('/past-weeks')">
+            <div class="action-icon">📅</div>
+            <div class="action-content">
+                <h3>View Past Weeks</h3>
+                <p>Look at completed planning cycles.</p>
+            </div>
+        </div>
+        <div class="action-card" style="border-color: rgba(239,68,68,0.2);">
+            <div class="action-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">🗑️</div>
+            <div class="action-content">
+                <h3>Cancel This Week</h3>
+                <p>Erase all plans and start over.</p>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,22 @@
+<section id="screen-login">
+    <h2 class="mb-sm">Who are you?</h2>
+    <p class="text-secondary mb-lg">Click your name to get started.</p>
+
+    <div class="grid-3">
+        <div class="action-card login-card" (click)="selectUser('lead')">
+            <div class="avatar avatar-lg" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">A</div>
+            <h3>Alice</h3>
+            <span class="badge badge-client" style="font-size:0.65rem; margin-top:4px;">👑 LEAD</span>
+        </div>
+        <div class="action-card login-card" (click)="selectUser('member')">
+            <div class="avatar avatar-lg" style="background: linear-gradient(135deg, #3b82f6, #06b6d4);">B</div>
+            <h3>Bob</h3>
+            <span class="text-muted" style="font-size:0.75rem; margin-top:4px;">Member</span>
+        </div>
+        <div class="action-card login-card" (click)="selectUser('member')">
+            <div class="avatar avatar-lg" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">C</div>
+            <h3>Charlie</h3>
+            <span class="text-muted" style="font-size:0.75rem; margin-top:4px;">Member</span>
+        </div>
+    </div>
+</section>
