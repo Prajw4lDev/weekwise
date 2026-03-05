@@ -1,4 +1,8 @@
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
+using Weekwise.Core.Interfaces;
+using Weekwise.Infrastructure.Data;
+using Weekwise.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,8 +33,20 @@ builder.Services.AddCors(options =>
     });
 });
 
-// TODO: Register DbContext (Level 2)
-// TODO: Register Repositories (Level 3)
+// EF Core — SQLite
+builder.Services.AddDbContext<WeekwiseDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Repositories
+builder.Services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
+builder.Services.AddScoped<IBacklogItemRepository, BacklogItemRepository>();
+builder.Services.AddScoped<IWeeklyPlanRepository, WeeklyPlanRepository>();
+builder.Services.AddScoped<IWorkCommitmentRepository, WorkCommitmentRepository>();
+builder.Services.AddScoped<IProgressUpdateRepository, ProgressUpdateRepository>();
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 // TODO: Register Services (Level 5+)
 
 var app = builder.Build();
