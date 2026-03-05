@@ -1,0 +1,12 @@
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\bin\Debug\net8.0\Weekwise.Core.deps.json
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\bin\Debug\net8.0\Weekwise.Core.dll
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\bin\Debug\net8.0\Weekwise.Core.pdb
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\obj\Debug\net8.0\Weekwise.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\obj\Debug\net8.0\Weekwise.Core.AssemblyInfoInputs.cache
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\obj\Debug\net8.0\Weekwise.Core.AssemblyInfo.cs
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\obj\Debug\net8.0\Weekwise.Core.csproj.CoreCompileInputs.cache
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\obj\Debug\net8.0\Weekwise.Core.sourcelink.json
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\obj\Debug\net8.0\Weekwise.Core.dll
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\obj\Debug\net8.0\refint\Weekwise.Core.dll
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\obj\Debug\net8.0\Weekwise.Core.pdb
+D:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\obj\Debug\net8.0\ref\Weekwise.Core.dll

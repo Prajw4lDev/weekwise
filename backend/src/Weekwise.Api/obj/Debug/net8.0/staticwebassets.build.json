@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "ipDXB1Bn2GQcpTXOAdLVx+HnmJMWXSp4NtXvtjg19WE=",
+  "Source": "Weekwise.Api",
+  "BasePath": "_content/Weekwise.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
