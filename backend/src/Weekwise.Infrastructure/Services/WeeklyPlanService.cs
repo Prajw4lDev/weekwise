@@ -287,6 +287,30 @@ public class WeeklyPlanService : IWeeklyPlanService
         await _repo.UpdateAsync(plan);
     }
 
+    public async Task CompletePlanAsync()
+    {
+        var plan = await _repo.GetActivePlanAsync()
+            ?? throw new InvalidOperationException("No active plan found to complete.");
+
+        if (plan.Status != PlanStatus.Frozen)
+            throw new InvalidOperationException("Only a frozen plan can be completed.");
+
+        plan.Status = PlanStatus.Completed;
+        await _repo.UpdateAsync(plan);
+    }
+
+    public async Task<IEnumerable<WeeklyPlanDto>> GetHistoryAsync()
+    {
+        var plans = await _repo.GetCompletedPlansAsync();
+        return _mapper.Map<IEnumerable<WeeklyPlanDto>>(plans);
+    }
+
+    public async Task<WeeklyPlanDto?> GetPlanDetailsAsync(Guid planId)
+    {
+        var plan = await _repo.GetPlanWithDetailsAsync(planId);
+        return plan == null ? null : _mapper.Map<WeeklyPlanDto>(plan);
+    }
+
     private async Task<WeeklyPlanDto> GetActivePlanDtoWithDetails(Guid planId)
     {
         var plan = await _repo.GetPlanWithDetailsAsync(planId);

@@ -74,6 +74,38 @@ public class PlanController : ControllerBase
         }
     }
 
+    /// <summary>Complete the current frozen plan.</summary>
+    [HttpPost("complete")]
+    public async Task<ActionResult> Complete()
+    {
+        try
+        {
+            await _service.CompletePlanAsync();
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>Get list of completed past plans.</summary>
+    [HttpGet("history")]
+    public async Task<ActionResult<IEnumerable<WeeklyPlanDto>>> GetHistory()
+    {
+        var history = await _service.GetHistoryAsync();
+        return Ok(history);
+    }
+
+    /// <summary>Get full details of a past plan.</summary>
+    [HttpGet("history/{id}")]
+    public async Task<ActionResult<WeeklyPlanDto>> GetHistoryDetail(Guid id)
+    {
+        var plan = await _service.GetPlanDetailsAsync(id);
+        if (plan == null) return NotFound();
+        return Ok(plan);
+    }
+
     // ─── COMMITMENTS ───
 
     /// <summary>Get all commitments for the active plan.</summary>
