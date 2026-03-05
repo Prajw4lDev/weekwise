@@ -3,43 +3,63 @@
         <h2>Pick a Backlog Item</h2>
         <button class="btn btn-ghost" (click)="goBack()">← Back to My Plan</button>
     </div>
-    <p class="text-secondary mb-md">You have <strong style="color:var(--status-done);">12 hours</strong> left to plan.
-    </p>
+    <p class="text-secondary mb-md">You have <strong style="color:var(--status-done);">{{ remainingHours }}
+            hours</strong> left to plan.</p>
 
+    <!-- Filter -->
     <div class="filter-tabs mb-md">
-        <button class="filter-tab active">All</button>
-        <button class="filter-tab">🟢 Client</button>
-        <button class="filter-tab">🟡 Tech Debt</button>
-        <button class="filter-tab">🔵 R&amp;D</button>
+        <button class="filter-tab" [class.active]="activeFilter === 'All'" (click)="setFilter('All')">All</button>
+        <button class="filter-tab" [class.active]="activeFilter === 'Client'" (click)="setFilter('Client')">🟢
+            Client</button>
+        <button class="filter-tab" [class.active]="activeFilter === 'TechDebt'" (click)="setFilter('TechDebt')">🟡 Tech
+            Debt</button>
+        <button class="filter-tab" [class.active]="activeFilter === 'RnD'" (click)="setFilter('RnD')">🔵
+            R&amp;D</button>
     </div>
 
+    <!-- Available Items -->
+    @if (availableItems.length === 0) {
+    <div class="glass-card no-hover" style="text-align:center; padding:var(--space-xl);">
+        <p class="text-muted">No available backlog items. Add some in Manage Backlog first.</p>
+    </div>
+    } @else {
     <div class="flex flex-col gap-sm mb-lg">
-        <div class="glass-card" style="padding:var(--space-md); cursor:pointer;">
+        @for (item of availableItems; track item.id) {
+        <div class="glass-card" style="padding:var(--space-md); cursor:pointer;"
+            [style.border]="selectedItemId === item.id ? '2px solid var(--border-accent)' : ''"
+            (click)="selectItem(item.id)">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-sm">
-                    <span class="badge badge-client">🟢 Client</span>
-                    <span style="font-weight:600;">Dashboard Analytics</span>
+                    <span class="badge" [class]="getCategoryClass(item.category)">{{ getCategoryLabel(item.category)
+                        }}</span>
+                    <span style="font-weight:600;">{{ item.title }}</span>
                 </div>
-                <span class="text-secondary">12h est</span>
+                <span class="text-secondary">{{ item.estimatedHours }}h est</span>
             </div>
+            @if (item.description) {
+            <p class="text-muted mt-xs" style="font-size:0.8rem; margin-left:4.5rem;">{{ item.description }}</p>
+            }
         </div>
-        <div class="glass-card" style="padding:var(--space-md); cursor:pointer; border:2px solid var(--border-accent);">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-sm">
-                    <span class="badge badge-techdebt">🟡 Tech Debt</span>
-                    <span style="font-weight:600;">CI/CD Pipeline Setup</span>
-                </div>
-                <span class="text-secondary">5h est</span>
-            </div>
-        </div>
+        }
     </div>
+    }
 
+    <!-- Hours Input (show when item selected) -->
+    @if (selectedItem) {
     <div class="glass-card no-hover" style="background:var(--bg-tertiary); padding:var(--space-md);">
-        <h4 class="mb-sm">How many hours will you work on this?</h4>
+        <h4 class="mb-sm">How many hours will you work on <strong>{{ selectedItem.title }}</strong>?</h4>
         <div class="flex items-center gap-md">
-            <input type="number" class="form-input" value="5" min="1" max="12" style="width:80px; text-align:center;">
-            <span class="text-secondary">Your hours left: <strong style="color:var(--status-done);">12</strong></span>
+            <input type="number" class="form-input" [(ngModel)]="hoursToCommit" [min]="1" [max]="maxHours"
+                style="width:80px; text-align:center;" id="hours-input">
+            <span class="text-secondary">Max: <strong style="color:var(--status-done);">{{ maxHours }}h</strong></span>
         </div>
-        <button class="btn btn-primary mt-md" (click)="addToPlan()">Add to My Plan</button>
+        @if (hoursToCommit > maxHours) {
+        <div class="validation-msg warning mt-sm" style="font-size:0.8rem;">
+            ⚠️ Exceeds available budget. Max is {{ maxHours }}h.
+        </div>
+        }
+        <button class="btn btn-primary mt-md" (click)="addToPlan()" [disabled]="!canAdd" id="add-to-plan-btn">Add to My
+            Plan</button>
     </div>
+    }
 </section>

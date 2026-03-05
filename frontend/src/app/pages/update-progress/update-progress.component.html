@@ -1,8 +1,9 @@
 <section id="screen-update-progress">
     <h2 class="mb-sm"><span class="icon">✏️</span> Update My Progress</h2>
-    <p class="text-secondary mb-lg">Committed: <strong>30h</strong>. Currently: <strong
-            style="color:var(--status-done);">16h</strong> done.</p>
+    <p class="text-secondary mb-lg">Committed: <strong>{{ totalCommitted }}h</strong>. Currently: <strong
+            style="color:var(--status-done);">{{ totalDone }}h</strong> done.</p>
 
+    <!-- Progress Ring -->
     <div class="glass-card no-hover mb-lg" style="text-align:center; padding:var(--space-xl);">
         <div class="progress-ring-container" style="margin-bottom:var(--space-md);">
             <svg width="120" height="120" viewBox="0 0 120 120">
@@ -14,75 +15,66 @@
                 </defs>
                 <circle class="progress-ring-bg" cx="60" cy="60" r="52" />
                 <circle class="progress-ring-fill" cx="60" cy="60" r="52" stroke-dasharray="326.7"
-                    stroke-dashoffset="152.5" />
+                    [attr.stroke-dashoffset]="ringDashoffset" />
             </svg>
             <div class="progress-ring-text">
-                <span class="ring-value text-gradient">53%</span>
+                <span class="ring-value text-gradient">{{ progressPercent }}%</span>
                 <span class="ring-label">Done</span>
             </div>
         </div>
     </div>
 
-    <div class="flex flex-col gap-md">
-        <div class="glass-card no-hover">
-            <div class="flex items-center justify-between mb-md">
-                <div class="flex items-center gap-sm"><span class="badge badge-client">🟢 Client</span><span
-                        style="font-weight:600;">API Redesign</span></div>
-                <span class="text-secondary">8h committed</span>
-            </div>
-            <div class="grid-3 gap-md">
-                <div class="form-group"><label>Hours Done</label><input type="number" class="form-input" value="6"
-                        min="0"></div>
-                <div class="form-group"><label>Status</label><select class="form-input">
-                        <option>Not Started</option>
-                        <option selected>In Progress</option>
-                        <option>Done</option>
-                        <option>Blocked</option>
-                    </select></div>
-                <div class="form-group"><label>Notes</label><input type="text" class="form-input"
-                        value="Endpoints 80% done"></div>
-            </div>
-        </div>
-        <div class="glass-card no-hover">
-            <div class="flex items-center justify-between mb-md">
-                <div class="flex items-center gap-sm"><span class="badge badge-techdebt">🟡 Tech Debt</span><span
-                        style="font-weight:600;">Refactor DB Layer</span></div>
-                <span class="text-secondary">6h committed</span>
-            </div>
-            <div class="grid-3 gap-md">
-                <div class="form-group"><label>Hours Done</label><input type="number" class="form-input" value="6"
-                        min="0"></div>
-                <div class="form-group"><label>Status</label><select class="form-input">
-                        <option>Not Started</option>
-                        <option>In Progress</option>
-                        <option selected>Done</option>
-                        <option>Blocked</option>
-                    </select></div>
-                <div class="form-group"><label>Notes</label><input type="text" class="form-input"
-                        value="Migration complete"></div>
-            </div>
-        </div>
-        <div class="glass-card no-hover">
-            <div class="flex items-center justify-between mb-md">
-                <div class="flex items-center gap-sm"><span class="badge badge-rnd">🔵 R&amp;D</span><span
-                        style="font-weight:600;">ML Model POC</span></div>
-                <span class="text-secondary">4h committed</span>
-            </div>
-            <div class="grid-3 gap-md">
-                <div class="form-group"><label>Hours Done</label><input type="number" class="form-input" value="5"
-                        min="0" style="border-color:var(--cat-techdebt);"></div>
-                <div class="form-group"><label>Status</label><select class="form-input">
-                        <option>Not Started</option>
-                        <option selected>In Progress</option>
-                        <option>Done</option>
-                        <option>Blocked</option>
-                    </select></div>
-                <div class="form-group"><label>Notes</label><input type="text" class="form-input"
-                        value="Took extra time for data"></div>
-            </div>
-            <div class="validation-msg warning mt-sm" style="font-size:0.8rem;">⚠️ You've put in more hours than planned
-                (5h / 4h). This will be noted.</div>
-        </div>
+    @if (myCommitments.length === 0) {
+    <div class="glass-card no-hover" style="text-align:center; padding:var(--space-xl);">
+        <p class="text-muted">No tasks to update. Plan your work first.</p>
     </div>
-    <button class="btn btn-primary mt-lg" style="padding:14px 32px; font-size:1rem;">💾 Save All Progress</button>
+    } @else {
+    <div class="flex flex-col gap-md">
+        @for (commitment of myCommitments; track commitment.id) {
+        @let item = getItem(commitment.backlogItemId);
+        @if (item) {
+        <div class="glass-card no-hover">
+            <div class="flex items-center justify-between mb-md">
+                <div class="flex items-center gap-sm">
+                    <span class="badge" [class]="getCategoryClass(item.category)">{{ getCategoryLabel(item.category)
+                        }}</span>
+                    <span style="font-weight:600;">{{ item.title }}</span>
+                </div>
+                <span class="text-secondary">{{ commitment.committedHours }}h committed</span>
+            </div>
+            <div class="grid-3 gap-md">
+                <div class="form-group">
+                    <label>Hours Done</label>
+                    <input type="number" class="form-input" [value]="getHours(commitment.id)"
+                        (input)="updateFormField(commitment.id, 'hours', $any($event.target).valueAsNumber)" min="0"
+                        [style.borderColor]="isOverHours(commitment) ? 'var(--cat-techdebt)' : ''">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select class="form-input" [value]="getStatus(commitment.id)"
+                        (change)="updateFormField(commitment.id, 'status', $any($event.target).value)">
+                        @for (opt of statusOptions; track opt.value) {
+                        <option [value]="opt.value" [selected]="getStatus(commitment.id) === opt.value">{{ opt.label }}
+                        </option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <input type="text" class="form-input" placeholder="Any notes..." [value]="getNotes(commitment.id)"
+                        (input)="updateFormField(commitment.id, 'notes', $any($event.target).value)">
+                </div>
+            </div>
+            @if (isOverHours(commitment)) {
+            <div class="validation-msg warning mt-sm" style="font-size:0.8rem;">
+                ⚠️ Over-hours: {{ getHours(commitment.id) }}h done / {{ commitment.committedHours }}h planned.
+            </div>
+            }
+        </div>
+        }
+        }
+    </div>
+    <button class="btn btn-primary mt-lg" style="padding:14px 32px; font-size:1rem;" (click)="saveAll()"
+        id="save-progress-btn">💾 Save All Progress</button>
+    }
 </section>

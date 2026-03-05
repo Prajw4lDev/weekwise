@@ -1,6 +1,7 @@
 <section id="screen-review-freeze">
     <h2 class="mb-lg"><span class="icon">❄️</span> Review the Team's Plan</h2>
 
+    <!-- Category Summary -->
     <h3 class="mb-md">Category Summary</h3>
     <div class="glass-card no-hover mb-lg">
         <table class="data-table">
@@ -13,46 +14,29 @@
                 </tr>
             </thead>
             <tbody>
+                @for (budget of categoryBudgets; track budget.category) {
                 <tr>
-                    <td><span class="badge badge-client">🟢 Client</span></td>
-                    <td>45h</td>
-                    <td>40h</td>
+                    <td><span class="badge" [class]="getCategoryClass(budget.category)">{{
+                            getCategoryLabel(budget.category) }}</span></td>
+                    <td>{{ budget.budgetHours }}h</td>
+                    <td>{{ budget.claimedHours }}h</td>
                     <td>
                         <div class="flex items-center gap-sm">
                             <div class="progress-bar-container" style="width:120px;">
-                                <div class="progress-bar-fill green" style="width:89%;"></div>
-                            </div><span class="text-secondary" style="font-size:0.8rem;">89%</span>
+                                <div class="progress-bar-fill" [class]="getProgressColor(getProgressPercent(budget))"
+                                    [style.width.%]="getProgressPercent(budget)"></div>
+                            </div>
+                            <span class="text-secondary" style="font-size:0.8rem;">{{ getProgressPercent(budget)
+                                }}%</span>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td><span class="badge badge-techdebt">🟡 Tech Debt</span></td>
-                    <td>27h</td>
-                    <td>27h</td>
-                    <td>
-                        <div class="flex items-center gap-sm">
-                            <div class="progress-bar-container" style="width:120px;">
-                                <div class="progress-bar-fill green" style="width:100%;"></div>
-                            </div><span class="text-secondary" style="font-size:0.8rem;">100%</span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-rnd">🔵 R&amp;D</span></td>
-                    <td>18h</td>
-                    <td>14h</td>
-                    <td>
-                        <div class="flex items-center gap-sm">
-                            <div class="progress-bar-container" style="width:120px;">
-                                <div class="progress-bar-fill amber" style="width:78%;"></div>
-                            </div><span class="text-secondary" style="font-size:0.8rem;">78%</span>
-                        </div>
-                    </td>
-                </tr>
+                }
             </tbody>
         </table>
     </div>
 
+    <!-- Member Summary -->
     <h3 class="mb-md">Member Summary</h3>
     <div class="glass-card no-hover mb-lg">
         <table class="data-table">
@@ -64,48 +48,43 @@
                 </tr>
             </thead>
             <tbody>
+                @for (summary of memberSummaries; track summary.member.id; let i = $index) {
                 <tr>
                     <td>
                         <div class="flex items-center gap-sm">
-                            <div class="avatar"
-                                style="background:linear-gradient(135deg,#6366f1,#8b5cf6);width:28px;height:28px;font-size:0.7rem;">
-                                A</div>Alice
+                            <div class="avatar" [style.background]="getGradient(i)"
+                                style="width:28px;height:28px;font-size:0.7rem;">{{ summary.member.name.charAt(0) }}
+                            </div>
+                            {{ summary.member.name }}
                         </div>
                     </td>
-                    <td>30h / 30h</td>
-                    <td><span class="validation-msg success"
-                            style="display:inline-flex;padding:4px 10px;font-size:0.8rem;">✅ Fully Planned</span></td>
-                </tr>
-                <tr>
+                    <td>{{ summary.committedHours }}h / {{ summary.maxHours }}h</td>
                     <td>
-                        <div class="flex items-center gap-sm">
-                            <div class="avatar"
-                                style="background:linear-gradient(135deg,#3b82f6,#06b6d4);width:28px;height:28px;font-size:0.7rem;">
-                                B</div>Bob
-                        </div>
+                        @if (summary.isFullyPlanned) {
+                        <span class="validation-msg success"
+                            style="display:inline-flex;padding:4px 10px;font-size:0.8rem;">✅ Fully Planned</span>
+                        } @else {
+                        <span class="validation-msg warning"
+                            style="display:inline-flex;padding:4px 10px;font-size:0.8rem;">⚠️ {{ summary.maxHours -
+                            summary.committedHours }}h remaining</span>
+                        }
                     </td>
-                    <td>30h / 30h</td>
-                    <td><span class="validation-msg success"
-                            style="display:inline-flex;padding:4px 10px;font-size:0.8rem;">✅ Fully Planned</span></td>
                 </tr>
-                <tr>
-                    <td>
-                        <div class="flex items-center gap-sm">
-                            <div class="avatar"
-                                style="background:linear-gradient(135deg,#f59e0b,#ef4444);width:28px;height:28px;font-size:0.7rem;">
-                                C</div>Charlie
-                        </div>
-                    </td>
-                    <td>21h / 30h</td>
-                    <td><span class="validation-msg warning"
-                            style="display:inline-flex;padding:4px 10px;font-size:0.8rem;">⚠️ Under-planned (9h
-                            left)</span></td>
-                </tr>
+                }
             </tbody>
         </table>
     </div>
 
-    <div class="validation-msg warning mb-md">⚠️ Can't freeze yet: Charlie has only committed 21 of 30 hours.</div>
-    <button class="btn btn-primary" style="opacity:0.5;cursor:not-allowed;padding:14px 32px;font-size:1rem;">❄️ Freeze
-        Plan</button>
+    <!-- Validation & Freeze -->
+    @if (!canFreeze) {
+    @for (issue of freezeIssues; track issue) {
+    <div class="validation-msg warning mb-sm">⚠️ {{ issue }}</div>
+    }
+    <button class="btn btn-primary" style="opacity:0.5;cursor:not-allowed;padding:14px 32px;font-size:1rem;" disabled>❄️
+        Freeze Plan</button>
+    } @else {
+    <div class="validation-msg success mb-md">✅ All members are fully planned! Ready to freeze.</div>
+    <button class="btn btn-primary" style="padding:14px 32px;font-size:1rem;" (click)="freezePlan()" id="freeze-btn">❄️
+        Freeze Plan</button>
+    }
 </section>
