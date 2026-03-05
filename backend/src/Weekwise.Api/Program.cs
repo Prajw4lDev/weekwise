@@ -47,7 +47,8 @@ builder.Services.AddScoped<IProgressUpdateRepository, ProgressUpdateRepository>(
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
-// TODO: Register Services (Level 5+)
+// Services
+builder.Services.AddScoped<ITeamMemberService, Weekwise.Infrastructure.Services.TeamMemberService>();
 
 var app = builder.Build();
 
