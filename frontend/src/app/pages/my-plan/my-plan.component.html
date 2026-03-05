@@ -1,80 +1,64 @@
 <section id="screen-plan-work">
     <h2 class="mb-lg"><span class="icon">📝</span> Plan My Work</h2>
 
+    <!-- Budget Bar -->
     <div class="budget-bar mb-lg">
         <div class="budget-item">
             <div class="budget-value text-gradient">30</div>
             <div class="budget-label">Budget (hrs)</div>
         </div>
         <div class="budget-item">
-            <div class="budget-value" style="color:var(--cat-techdebt);">18</div>
+            <div class="budget-value" style="color:var(--cat-techdebt);">{{ committedHours }}</div>
             <div class="budget-label">Claimed</div>
         </div>
         <div class="budget-item">
-            <div class="budget-value" style="color:var(--status-done);">12</div>
+            <div class="budget-value" style="color:var(--status-done);">{{ remainingHours }}</div>
             <div class="budget-label">Left</div>
         </div>
     </div>
 
+    <!-- My Plan Items -->
     <div class="flex items-center justify-between mb-md">
         <h3>My Plan</h3>
-        <button class="btn btn-primary" (click)="pickItem()">+ Add Backlog Item</button>
+        @if (planService.isPlanning() && remainingHours > 0) {
+        <button class="btn btn-primary" (click)="pickItem()" id="add-backlog-btn">+ Add Backlog Item</button>
+        }
     </div>
 
-    <div class="flex flex-col gap-sm">
-        <div class="glass-card" style="padding:var(--space-md);">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-md">
-                    <span class="badge badge-client">🟢 Client</span>
-                    <div>
-                        <div style="font-weight:600;">API Redesign</div><span class="text-muted"
-                            style="font-size:0.8rem;">Est: 10h total</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-md">
-                    <div style="text-align:center;">
-                        <div style="font-size:1.3rem; font-weight:700;">8h</div>
-                        <div class="text-muted" style="font-size:0.7rem;">Committed</div>
-                    </div>
-                    <button class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">✕</button>
-                </div>
-            </div>
-        </div>
-        <div class="glass-card" style="padding:var(--space-md);">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-md">
-                    <span class="badge badge-techdebt">🟡 Tech Debt</span>
-                    <div>
-                        <div style="font-weight:600;">Refactor DB Layer</div><span class="text-muted"
-                            style="font-size:0.8rem;">Est: 8h total</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-md">
-                    <div style="text-align:center;">
-                        <div style="font-size:1.3rem; font-weight:700;">6h</div>
-                        <div class="text-muted" style="font-size:0.7rem;">Committed</div>
-                    </div>
-                    <button class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">✕</button>
-                </div>
-            </div>
-        </div>
-        <div class="glass-card" style="padding:var(--space-md);">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-md">
-                    <span class="badge badge-rnd">🔵 R&amp;D</span>
-                    <div>
-                        <div style="font-weight:600;">ML Model POC</div><span class="text-muted"
-                            style="font-size:0.8rem;">Est: 6h total</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-md">
-                    <div style="text-align:center;">
-                        <div style="font-size:1.3rem; font-weight:700;">4h</div>
-                        <div class="text-muted" style="font-size:0.7rem;">Committed</div>
-                    </div>
-                    <button class="btn btn-icon btn-ghost" style="color:var(--status-blocked);">✕</button>
-                </div>
-            </div>
-        </div>
+    @if (myCommitments.length === 0) {
+    <div class="glass-card no-hover" style="text-align:center; padding:var(--space-xl);">
+        <p class="text-muted mb-sm">No items in your plan yet.</p>
+        <p class="text-secondary">Click <strong>"+ Add Backlog Item"</strong> to start planning.</p>
     </div>
+    } @else {
+    <div class="flex flex-col gap-sm">
+        @for (commitment of myCommitments; track commitment.id) {
+        @let item = getItemById(commitment.backlogItemId);
+        @if (item) {
+        <div class="glass-card" style="padding:var(--space-md);">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-md">
+                    <span class="badge" [class]="getCategoryClass(item.category)">{{ getCategoryLabel(item.category)
+                        }}</span>
+                    <div>
+                        <div style="font-weight:600;">{{ item.title }}</div>
+                        <span class="text-muted" style="font-size:0.8rem;">Est: {{ item.estimatedHours }}h total</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-md">
+                    <div style="text-align:center;">
+                        <div style="font-size:1.3rem; font-weight:700;">{{ commitment.committedHours }}h</div>
+                        <div class="text-muted" style="font-size:0.7rem;">Committed</div>
+                    </div>
+                    @if (planService.isPlanning()) {
+                    <button class="btn btn-icon btn-ghost" style="color:var(--status-blocked);"
+                        (click)="removeCommitment(commitment.id)" title="Remove">✕</button>
+                    }
+                </div>
+            </div>
+        </div>
+        }
+        }
+    </div>
+    }
 </section>
