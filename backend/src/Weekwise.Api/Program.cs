@@ -49,6 +49,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 // Services
 builder.Services.AddScoped<ITeamMemberService, Weekwise.Infrastructure.Services.TeamMemberService>();
+builder.Services.AddScoped<IBacklogItemService, Weekwise.Infrastructure.Services.BacklogItemService>();
 
 var app = builder.Build();
 
