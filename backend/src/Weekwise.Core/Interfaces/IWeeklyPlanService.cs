@@ -9,6 +9,9 @@ public interface IWeeklyPlanService
     Task<WeeklyPlanDto> CreatePlanAsync();
     Task<WeeklyPlanDto> SetupPlanAsync(SetupWeeklyPlanDto dto);
     Task CancelPlanAsync();
+    Task CompletePlanAsync();
+    Task<IEnumerable<WeeklyPlanDto>> GetHistoryAsync();
+    Task<WeeklyPlanDto?> GetPlanDetailsAsync(Guid planId);
 
     Task<WorkCommitmentDto> AddCommitmentAsync(CreateCommitmentDto dto);
     Task RemoveCommitmentAsync(Guid commitmentId);
