@@ -52,6 +52,7 @@ builder.Services.AddScoped<ITeamMemberService, Weekwise.Infrastructure.Services.
 builder.Services.AddScoped<IBacklogItemService, Weekwise.Infrastructure.Services.BacklogItemService>();
 builder.Services.AddScoped<IWeeklyPlanService, Weekwise.Infrastructure.Services.WeeklyPlanService>();
 builder.Services.AddScoped<IProgressService, Weekwise.Infrastructure.Services.ProgressService>();
+builder.Services.AddScoped<IDashboardService, Weekwise.Infrastructure.Services.DashboardService>();
 
 var app = builder.Build();
 
