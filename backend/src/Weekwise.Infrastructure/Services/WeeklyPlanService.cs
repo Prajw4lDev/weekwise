@@ -208,6 +208,85 @@ public class WeeklyPlanService : IWeeklyPlanService
         return _mapper.Map<IEnumerable<WorkCommitmentDto>>(commitments);
     }
 
+    public async Task<PlanReviewDto> GetPlanReviewAsync()
+    {
+        var plan = await _repo.GetActivePlanAsync()
+            ?? throw new InvalidOperationException("No active plan found.");
+
+        var allCommitments = await _commitmentRepo.GetByPlanAsync(plan.Id);
+        var review = new PlanReviewDto
+        {
+            PlanId = plan.Id,
+            Status = plan.Status
+        };
+
+        // Category Summaries
+        foreach (ItemCategory category in Enum.GetValues(typeof(ItemCategory)))
+        {
+            int percent = category switch
+            {
+                ItemCategory.Client => plan.ClientPercent,
+                ItemCategory.TechDebt => plan.TechDebtPercent,
+                ItemCategory.RnD => plan.RndPercent,
+                _ => 0
+            };
+
+            double budgetHours = plan.TotalHours * (percent / 100.0);
+            double committed = allCommitments
+                .Where(c => c.BacklogItem?.Category == category)
+                .Sum(c => c.CommittedHours);
+
+            review.Categories.Add(new CategorySummaryDto
+            {
+                Category = category,
+                BudgetPercent = percent,
+                BudgetHours = budgetHours,
+                CommittedHours = committed
+            });
+        }
+
+        // Member Summaries
+        foreach (var pm in plan.PlanMembers)
+        {
+            double committed = allCommitments
+                .Where(c => c.MemberId == pm.MemberId)
+                .Sum(c => c.CommittedHours);
+
+            review.Members.Add(new MemberSummaryDto
+            {
+                MemberId = pm.MemberId,
+                MemberName = pm.Member?.Name ?? "Unknown",
+                CommittedHours = committed
+            });
+
+            if (committed < 30)
+            {
+                review.ValidationIssues.Add($"Member {pm.Member?.Name} has only {committed}h/30h committed.");
+            }
+        }
+
+        review.CanFreeze = !review.ValidationIssues.Any() && plan.Status == PlanStatus.Planning;
+
+        return review;
+    }
+
+    public async Task FreezePlanAsync()
+    {
+        var review = await GetPlanReviewAsync();
+        
+        if (!review.CanFreeze)
+        {
+            var errors = string.Join(" ", review.ValidationIssues);
+            throw new InvalidOperationException($"Cannot freeze plan. {errors}");
+        }
+
+        var plan = await _repo.GetByIdAsync(review.PlanId)
+            ?? throw new InvalidOperationException("Plan not found.");
+
+        plan.Status = PlanStatus.Frozen;
+        await _repo.UpdateAsync(plan);
+    }
+
     private async Task<WeeklyPlanDto> GetActivePlanDtoWithDetails(Guid planId)
     {
         var plan = await _repo.GetPlanWithDetailsAsync(planId);

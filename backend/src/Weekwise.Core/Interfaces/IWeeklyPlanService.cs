@@ -14,4 +14,7 @@ public interface IWeeklyPlanService
     Task RemoveCommitmentAsync(Guid commitmentId);
     Task<IEnumerable<WorkCommitmentDto>> GetCommitmentsByMemberAsync(Guid memberId);
     Task<IEnumerable<WorkCommitmentDto>> GetActivePlanCommitmentsAsync();
+
+    Task<PlanReviewDto> GetPlanReviewAsync();
+    Task FreezePlanAsync();
 }

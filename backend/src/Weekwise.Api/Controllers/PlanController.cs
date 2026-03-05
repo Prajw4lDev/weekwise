@@ -129,4 +129,36 @@ public class PlanController : ControllerBase
             return NotFound(new { error = ex.Message });
         }
     }
+
+    // ─── REVIEW & FREEZE ───
+
+    /// <summary>Get a detailed health review of the active plan.</summary>
+    [HttpGet("review")]
+    public async Task<ActionResult<PlanReviewDto>> GetReview()
+    {
+        try
+        {
+            var review = await _service.GetPlanReviewAsync();
+            return Ok(review);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>Lock the plan for execution after review.</summary>
+    [HttpPost("freeze")]
+    public async Task<ActionResult> Freeze()
+    {
+        try
+        {
+            await _service.FreezePlanAsync();
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
 }
