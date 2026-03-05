@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Weekwise.Core.DTOs.WeeklyPlan;
+using Weekwise.Core.DTOs.WorkCommitment;
 using Weekwise.Core.Interfaces;
 
 namespace Weekwise.Api.Controllers;
@@ -70,6 +71,62 @@ public class PlanController : ControllerBase
         catch (InvalidOperationException ex)
         {
             return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    // ─── COMMITMENTS ───
+
+    /// <summary>Get all commitments for the active plan.</summary>
+    [HttpGet("commitments")]
+    public async Task<ActionResult<IEnumerable<WorkCommitmentDto>>> GetActiveCommitments()
+    {
+        var commitments = await _service.GetActivePlanCommitmentsAsync();
+        return Ok(commitments);
+    }
+
+    /// <summary>Get commitments for a specific member in the active plan.</summary>
+    [HttpGet("commitments/member/{memberId}")]
+    public async Task<ActionResult<IEnumerable<WorkCommitmentDto>>> GetMemberCommitments(Guid memberId)
+    {
+        var commitments = await _service.GetCommitmentsByMemberAsync(memberId);
+        return Ok(commitments);
+    }
+
+    /// <summary>Add a new work commitment.</summary>
+    [HttpPost("commitments")]
+    public async Task<ActionResult<WorkCommitmentDto>> AddCommitment([FromBody] CreateCommitmentDto dto)
+    {
+        try
+        {
+            var commitment = await _service.AddCommitmentAsync(dto);
+            return Ok(commitment);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>Remove a work commitment.</summary>
+    [HttpDelete("commitments/{id}")]
+    public async Task<ActionResult> RemoveCommitment(Guid id)
+    {
+        try
+        {
+            await _service.RemoveCommitmentAsync(id);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
         }
     }
 }
