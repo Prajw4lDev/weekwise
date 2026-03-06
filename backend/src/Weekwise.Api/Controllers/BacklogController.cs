@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Weekwise.Core.DTOs.BacklogItem;
 using Weekwise.Core.Enums;
@@ -7,6 +8,7 @@ namespace Weekwise.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class BacklogController : ControllerBase
 {
     private readonly IBacklogItemService _service;

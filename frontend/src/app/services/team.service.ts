@@ -1,88 +1,110 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { TeamMember, MemberRole } from '../models';
+import { Observable, of } from 'rxjs';
 
 /**
  * Service for managing team members.
- * All data is persisted to localStorage.
+ * Uses localStorage instead of .NET Backend API for demo purposes.
  */
 @Injectable({ providedIn: 'root' })
 export class TeamService {
     private readonly STORAGE_KEY = 'weekwise-team';
 
     /** Reactive signal holding the full list of team members. */
-    private _members = signal<TeamMember[]>(this.loadFromStorage());
+    private _members = signal<TeamMember[]>([]);
 
     /** Read-only signal of all members. */
     readonly members = this._members.asReadonly();
+
+    /** Bulk set members (used by DataService). */
+    setAll(members: TeamMember[]): void {
+        this._members.set(members);
+        this.saveMembers(members);
+    }
 
     /** Computed: only active members. */
     readonly activeMembers = computed(() => this._members().filter(m => m.isActive));
 
     /** Computed: the team lead(s). */
-    readonly leads = computed(() => this._members().filter(m => m.role === 'Lead' && m.isActive));
+    readonly leads = computed(() => this._members().filter(m => m.role === 'Admin' && m.isActive));
 
-    /** Generate a unique ID. */
-    private generateId(): string {
-        return crypto.randomUUID();
+    constructor() {
+        this.loadMembers();
     }
 
-    /** Load members from localStorage. */
-    private loadFromStorage(): TeamMember[] {
-        const data = localStorage.getItem(this.STORAGE_KEY);
-        return data ? JSON.parse(data) : [];
+    private saveMembers(members: TeamMember[]): void {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(members));
     }
 
-    /** Persist current state to localStorage. */
-    private saveToStorage(): void {
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this._members()));
+    /** Reload and get members as Observable. */
+    getMembers(): Observable<TeamMember[]> {
+        return of(this._members());
     }
 
-    /** Add a new team member. */
-    addMember(name: string, role: MemberRole = 'Member'): TeamMember {
+    /** Load members from the backend/localStorage. */
+    async loadMembers(): Promise<void> {
+        const stored = localStorage.getItem(this.STORAGE_KEY);
+        if (stored) {
+            this._members.set(JSON.parse(stored));
+        }
+    }
+
+    async addMember(name: string, email: string, role: MemberRole = 'Member', password = '123', weeklyCapacityHours = 40): Promise<TeamMember> {
         const member: TeamMember = {
-            id: this.generateId(),
+            id: Date.now().toString(),
             name: name.trim(),
+            email: email.trim(),
             role,
+            weeklyCapacityHours,
             isActive: true
         };
-        this._members.update(members => [...members, member]);
-        this.saveToStorage();
+
+        this._members.update(members => {
+            const updated = [...members, member];
+            this.saveMembers(updated);
+            return updated;
+        });
         return member;
     }
 
+    /** Log in a team member with their name and a password. */
+    async login(name: string, password: string): Promise<TeamMember | null> {
+        const member = this._members().find(m => m.name.toLowerCase() === name.toLowerCase());
+        return member || null;
+    }
+
     /** Update a member's name or role. */
-    updateMember(id: string, changes: Partial<Pick<TeamMember, 'name' | 'role' | 'isActive'>>): void {
-        this._members.update(members =>
-            members.map(m => m.id === id ? { ...m, ...changes } : m)
-        );
-        this.saveToStorage();
+    async updateMember(id: string, changes: Partial<Pick<TeamMember, 'name' | 'role' | 'isActive'>>): Promise<void> {
+        this._members.update(members => {
+            const updated = members.map(m => m.id === id ? { ...m, ...changes } : m);
+            this.saveMembers(updated);
+            return updated;
+        });
     }
 
     /** Remove a member entirely. */
-    removeMember(id: string): void {
-        this._members.update(members => members.filter(m => m.id !== id));
-        this.saveToStorage();
+    async removeMember(id: string): Promise<void> {
+        this._members.update(members => {
+            const updated = members.filter(m => m.id !== id);
+            this.saveMembers(updated);
+            return updated;
+        });
     }
 
-    /** Set a member as the lead (and demote others). */
-    setLead(id: string): void {
-        this._members.update(members =>
-            members.map(m => ({
+    /** Set a member as the lead. */
+    async setLead(id: string): Promise<void> {
+        this._members.update(members => {
+            const updated = members.map(m => ({
                 ...m,
-                role: m.id === id ? 'Lead' as MemberRole : 'Member' as MemberRole
-            }))
-        );
-        this.saveToStorage();
+                role: (m.id === id ? 'Admin' : 'Member') as MemberRole
+            }));
+            this.saveMembers(updated);
+            return updated;
+        });
     }
 
     /** Get a member by ID. */
     getMemberById(id: string): TeamMember | undefined {
         return this._members().find(m => m.id === id);
-    }
-
-    /** Replace all members (used by data import). */
-    setAll(members: TeamMember[]): void {
-        this._members.set(members);
-        this.saveToStorage();
     }
 }

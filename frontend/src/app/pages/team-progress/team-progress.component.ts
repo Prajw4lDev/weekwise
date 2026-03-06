@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PlanService, ProgressService, BacklogService } from '../../services';
 import { MemberProgressSummary, ItemCategory } from '../../models';
@@ -8,11 +9,15 @@ import { MemberProgressSummary, ItemCategory } from '../../models';
  */
 @Component({
     selector: 'app-team-progress',
+    standalone: true,
+    imports: [CommonModule],
     templateUrl: './team-progress.component.html',
     styleUrl: './team-progress.component.css'
 })
 export class TeamProgressComponent {
+
     private router = inject(Router);
+
     planService = inject(PlanService);
     progressService = inject(ProgressService);
     backlogService = inject(BacklogService);

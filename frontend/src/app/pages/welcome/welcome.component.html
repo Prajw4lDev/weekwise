@@ -1,65 +1,95 @@
-<section id="screen-welcome">
-    <h1 class="mb-md">👋 Welcome to <span class="text-gradient">Weekwise</span></h1>
-    <p class="text-secondary mb-lg">Set up your team to get started. Add members and pick one as the Team Lead.</p>
+<div class="welcome-page-container">
+    <!-- Add Team Member Card -->
+    @if (authService.getRole() === 'Admin') {
+    <div class="login-card-premium">
+        <div class="login-content">
+            <h2 class="login-title">Add Team Member</h2>
+            <p class="login-subtitle">Create a new member account</p>
 
-    <div class="grid-2">
-        <!-- Add Member Form -->
-        <div class="glass-card no-hover">
-            <h3 class="mb-md">Add a Team Member</h3>
-            <div class="flex gap-sm">
-                <input type="text" class="form-input" placeholder="Enter member name..." [(ngModel)]="newMemberName"
-                    (keydown)="onKeyDown($event)" style="flex:1" id="add-member-input">
-                <button class="btn btn-primary" (click)="addMember()" [disabled]="!newMemberName.trim()">+ Add</button>
-            </div>
+            <form (submit)="addMember()" class="login-form">
+                <div class="input-group">
+                    <label>Member Name</label>
+                    <input type="text" [(ngModel)]="newMemberName" name="name" placeholder="Enter member name"
+                        class="premium-input" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" [(ngModel)]="newMemberEmail" name="email" placeholder="Enter email address"
+                        class="premium-input" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" [(ngModel)]="newMemberPassword" name="password" placeholder="Set password"
+                        class="premium-input" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Weekly Capacity (hours)</label>
+                    <input type="number" [(ngModel)]="newMemberCapacity" name="capacity" placeholder="e.g. 40"
+                        class="premium-input" required>
+                </div>
+
+                <button type="submit" class="btn-login-gradient"
+                    [disabled]="!newMemberName || !newMemberEmail || !newMemberPassword">
+                    Add Member
+                </button>
+            </form>
         </div>
+    </div>
+    }
 
-        <!-- Team Roster -->
-        <div class="glass-card no-hover">
-            <h3 class="mb-md">Your Team</h3>
+    <!-- Team Roster Section -->
+    <div class="roster-card glass-card no-hover">
+        <h3 class="mb-md">Current Team Roster</h3>
 
-            @if (teamService.members().length === 0) {
-            <p class="text-muted" style="text-align:center; padding:var(--space-lg);">No members yet. Add your first
-                team member!</p>
-            }
+        @if (teamService.members().length === 0) {
+        <p class="text-muted" style="text-align:center; padding:20px;">
+            No members yet. Add your first team member!
+        </p>
+        }
 
-            <div class="flex flex-col gap-sm">
-                @for (member of teamService.members(); track member.id; let i = $index) {
-                <div class="flex items-center justify-between"
-                    style="padding:10px 14px; background:var(--bg-card); border-radius:var(--radius-sm);">
-                    <div class="flex items-center gap-sm">
-                        <div class="avatar" [style.background]="getGradient(i)">{{ getInitial(member.name) }}</div>
-                        <div>
-                            <div style="font-weight:600;">{{ member.name }}</div>
-                            @if (member.role === 'Lead') {
-                            <span class="badge badge-client" style="font-size:0.65rem;">👑 LEAD</span>
-                            } @else {
-                            <span class="text-muted" style="font-size:0.75rem;">Member</span>
-                            }
-                        </div>
+        <div class="flex flex-col gap-sm">
+            @for (member of teamService.members(); track member.id; let i = $index) {
+            <div class="member-item">
+                <div class="flex items-center gap-sm">
+                    <div class="avatar" [style.background]="getGradient(i)">
+                        {{ getInitial(member.name) }}
                     </div>
-                    <div class="flex gap-xs">
-                        @if (member.role !== 'Lead') {
-                        <button class="btn btn-sm btn-ghost" (click)="makeLead(member.id)">Make Lead</button>
+                    <div>
+                        <div style="font-weight:600;">{{ member.name }}</div>
+                        <div style="font-size:0.75rem; color:#94a3b8;">{{ member.email }}</div>
+                        @if (member.role === 'Admin') {
+                        <span class="badge-lead">👑 LEAD</span>
+                        } @else {
+                        <span class="text-muted" style="font-size:0.75rem;">Member</span>
                         }
-                        <button class="btn btn-icon btn-ghost" title="Remove"
-                            (click)="removeMember(member.id)">✕</button>
                     </div>
+                </div>
+                @if (authService.getRole() === 'Admin') {
+                <div class="flex gap-xs">
+                    @if (member.role !== 'Admin') {
+                    <button class="btn btn-sm btn-ghost" (click)="makeLead(member.id)">Make Lead</button>
+                    }
+                    <button class="btn btn-icon btn-ghost" title="Remove" (click)="removeMember(member.id)">✕</button>
                 </div>
                 }
             </div>
-
-            @if (teamService.members().length > 0) {
-            <button class="btn btn-primary mt-lg" style="width:100%;" (click)="continue()" [disabled]="!canContinue"
-                id="continue-btn">
-                Continue →
-            </button>
-            @if (!canContinue && teamService.members().length > 0) {
-            <div class="validation-msg warning mt-sm" style="font-size:0.8rem;">
-                @if (teamService.leads().length === 0) {
-                ⚠️ Please assign a Team Lead.
-                } @else if (teamService.members().length < 2) { ⚠️ Add at least 2 members. } </div>
-                    }
-                    }
-            </div>
+            }
         </div>
-</section>
+
+        @if (teamService.members().length > 0) {
+        <button class="btn-login-gradient btn-continue" (click)="continue()" [disabled]="!canContinue">
+            Continue to Dashboard →
+        </button>
+
+        @if (!canContinue) {
+        <div class="validation-msg warning mt-sm" style="font-size:0.8rem; text-align:center;">
+            @if (teamService.leads().length === 0) {
+            ⚠️ Please assign a Team Lead.
+            } @else if (teamService.members().length < 2) { ⚠️ Add at least 2 members to proceed. } </div>
+                }
+                }
+        </div>
+    </div>

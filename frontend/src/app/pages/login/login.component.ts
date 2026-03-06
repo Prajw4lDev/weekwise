@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { TeamService, UserContextService } from '../../services';
-import { TeamMember } from '../../models';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { UserContextService } from '../../services';
 
 /**
  * Login screen — "Who are you?"
@@ -9,23 +10,49 @@ import { TeamMember } from '../../models';
  */
 @Component({
     selector: 'app-login',
-    imports: [RouterLink],
+    imports: [RouterLink, FormsModule],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css'
 })
 export class LoginComponent {
     private router = inject(Router);
-    teamService = inject(TeamService);
-    private userContext = inject(UserContextService);
+    authService = inject(AuthService);
+    userContext = inject(UserContextService);
 
-    /** Select a user and navigate to the appropriate dashboard. */
-    selectUser(member: TeamMember): void {
-        this.userContext.setUser(member);
-        if (member.role === 'Lead') {
-            this.router.navigate(['/home']);
-        } else {
-            this.router.navigate(['/home-member']);
-        }
+    /** Login credentials. */
+    email = '';
+    password = '';
+    error = '';
+    isLoading = false;
+
+    /** Verify credentials and log in. */
+    async verifyLogin(): Promise<void> {
+        const trimmedEmail = this.email.trim();
+        const trimmedPassword = this.password.trim();
+        if (!trimmedEmail || !trimmedPassword) return;
+
+        this.isLoading = true;
+        this.error = '';
+
+        this.authService.login({ email: trimmedEmail, password: trimmedPassword }).subscribe({
+            next: (user) => {
+                if (user.role === 'Admin') {
+                    this.router.navigate(['/home-admin']);
+                } else {
+                    this.router.navigate(['/home-member']);
+                }
+            },
+            error: (err) => {
+                if (typeof err.error === 'string') {
+                    this.error = err.error;
+                } else if (err.error?.message) {
+                    this.error = err.error.message;
+                } else {
+                    this.error = err.statusText || 'Login failed. Please check your credentials.';
+                }
+                this.isLoading = false;
+            }
+        });
     }
 
     /** Get initials for avatar. */

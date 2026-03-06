@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Weekwise.Core.DTOs.WeeklyPlan;
 using Weekwise.Core.DTOs.WorkCommitment;
 using Weekwise.Core.Interfaces;
@@ -7,6 +8,7 @@ namespace Weekwise.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class PlanController : ControllerBase
 {
     private readonly IWeeklyPlanService _service;

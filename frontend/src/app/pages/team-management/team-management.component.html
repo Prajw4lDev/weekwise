@@ -1,0 +1,79 @@
+<div class="team-management-container">
+    <header class="page-header">
+        <h1 class="text-gradient">Team Management</h1>
+        <p class="subtitle">Invite and manage your team members</p>
+    </header>
+
+    <div class="management-grid">
+        <!-- Invite Form -->
+        <section class="card-premium invite-section">
+            <h2 class="card-title">Invite New Member</h2>
+            <form (ngSubmit)="onInvite()" #inviteForm="ngForm">
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" [(ngModel)]="inviteEmail" name="email" required class="premium-input"
+                        placeholder="colleague@example.com">
+                </div>
+
+                <div class="input-group">
+                    <label>Role</label>
+                    <select [(ngModel)]="inviteRole" name="role" class="premium-input" style="appearance: auto;">
+                        <option value="Member">Team Member</option>
+                        <option value="Admin">Team Lead (Admin)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-gradient" [disabled]="!inviteForm.valid || isInviting">
+                    {{ isInviting ? 'CREATING...' : 'GENERATE INVITE' }}
+                </button>
+
+                <div *ngIf="successMessage" class="alert-success">{{ successMessage }}</div>
+                <div *ngIf="errorMessage" class="alert-error">{{ errorMessage }}</div>
+
+                <div *ngIf="lastInviteLink" class="invite-link-box">
+                    <p class="invite-label">Share this link with the member:</p>
+                    <div class="link-copy-row">
+                        <input type="text" [value]="lastInviteLink" readonly class="link-input">
+                        <button type="button" (click)="copyLink()" class="btn-copy">Copy</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Active Members -->
+        <section class="card-premium">
+            <h2 class="card-title">Active Members ({{ members.length }})</h2>
+            <div class="member-list">
+                <div *ngFor="let member of members" class="member-item">
+                    <div class="member-info">
+                        <div class="avatar-small">{{ getInitial(member.name) }}</div>
+                        <div class="details">
+                            <span class="name">{{ member.name }}</span>
+                            <span class="email">{{ member.email }}</span>
+                        </div>
+                    </div>
+                    <span class="badge" [class.badge-primary]="member.role === 'Admin'">{{ member.role }}</span>
+                </div>
+            </div>
+            <div *ngIf="members.length === 0 && !isLoading" class="empty-state">No active members found.</div>
+        </section>
+
+        <!-- Pending Invitations -->
+        <section class="card-premium">
+            <h2 class="card-title">Pending Invitations ({{ invitations.length }})</h2>
+            <div class="member-list">
+                <div *ngFor="let invite of invitations" class="member-item">
+                    <div class="member-info">
+                        <div class="avatar-small invite-avatar">?</div>
+                        <div class="details">
+                            <span class="name">{{ invite.email }}</span>
+                            <span class="email">Invited on {{ invite.createdAt | date:'shortDate' }}</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-pending">{{ invite.status }}</span>
+                </div>
+            </div>
+            <div *ngIf="invitations.length === 0 && !isLoading" class="empty-state">No pending invitations.</div>
+        </section>
+    </div>
+</div>

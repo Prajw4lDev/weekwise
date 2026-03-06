@@ -21,10 +21,29 @@ public class WeekwiseDbContext : DbContext
     public DbSet<PlanMember> PlanMembers => Set<PlanMember>();
     public DbSet<WorkCommitment> WorkCommitments => Set<WorkCommitment>();
     public DbSet<ProgressUpdate> ProgressUpdates => Set<ProgressUpdate>();
+    public DbSet<Invitation> Invitations => Set<Invitation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // ─────────────────────────────────────────────
+        // Invitation
+        // ─────────────────────────────────────────────
+        modelBuilder.Entity<Invitation>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Token).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Role).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.Status)
+                  .IsRequired()
+                  .HasConversion<string>()
+                  .HasMaxLength(20);
+            
+            entity.HasIndex(e => e.Token).IsUnique();
+            entity.HasIndex(e => e.Email);
+        });
 
         // ─────────────────────────────────────────────
         // TeamMember

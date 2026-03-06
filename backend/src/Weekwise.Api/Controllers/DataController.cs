@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Weekwise.Core.Interfaces;
 
@@ -5,6 +6,7 @@ namespace Weekwise.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class DataController : ControllerBase
 {
     private readonly IDataService _service;

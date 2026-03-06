@@ -1,0 +1,22 @@
+﻿  Determining projects to restore...
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj : warning NU1902: Package 'System.IdentityModel.Tokens.Jwt' 7.0.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-59j7-ghrg-fj52
+  All projects are up-to-date for restore.
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj : warning NU1902: Package 'System.IdentityModel.Tokens.Jwt' 7.0.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-59j7-ghrg-fj52
+  Weekwise.Core -> d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Core\bin\Debug\net8.0\Weekwise.Core.dll
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Repositories\TeamMemberRepository.cs(17,50): error CS0019: Operator '==' cannot be applied to operands of type 'string' and 'MemberRole' [d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj]
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Services\DataService.cs(147,89): error CS0029: Cannot implicitly convert type 'Weekwise.Core.Enums.MemberRole' to 'string' [d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj]
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Services\DataService.cs(148,85): error CS0029: Cannot implicitly convert type 'Weekwise.Core.Enums.MemberRole' to 'string' [d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj]
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Services\DataService.cs(149,87): error CS0029: Cannot implicitly convert type 'Weekwise.Core.Enums.MemberRole' to 'string' [d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj]
+
+Build FAILED.
+
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj : warning NU1902: Package 'System.IdentityModel.Tokens.Jwt' 7.0.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-59j7-ghrg-fj52
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj : warning NU1902: Package 'System.IdentityModel.Tokens.Jwt' 7.0.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-59j7-ghrg-fj52
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Repositories\TeamMemberRepository.cs(17,50): error CS0019: Operator '==' cannot be applied to operands of type 'string' and 'MemberRole' [d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj]
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Services\DataService.cs(147,89): error CS0029: Cannot implicitly convert type 'Weekwise.Core.Enums.MemberRole' to 'string' [d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj]
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Services\DataService.cs(148,85): error CS0029: Cannot implicitly convert type 'Weekwise.Core.Enums.MemberRole' to 'string' [d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj]
+d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Services\DataService.cs(149,87): error CS0029: Cannot implicitly convert type 'Weekwise.Core.Enums.MemberRole' to 'string' [d:\ThinkSchool\Project\weekwise\backend\src\Weekwise.Infrastructure\Weekwise.Infrastructure.csproj]
+    2 Warning(s)
+    4 Error(s)
+
+Time Elapsed 00:00:02.60

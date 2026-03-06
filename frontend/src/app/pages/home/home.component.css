@@ -1,1 +1,250 @@
-/* Home component styles */
+/* Admin Home Dashboard styles */
+
+:host {
+    --cat-client: #6366f1;
+    /* Indigo */
+    --cat-techdebt: #ec4899;
+    /* Pink */
+    --cat-rnd: #10b981;
+    /* Emerald */
+}
+
+.welcome-header {
+    margin-bottom: 2rem;
+    animation: slideIn 0.5s ease-out;
+}
+
+.dashboard-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    background: linear-gradient(135deg, var(--text-primary, #f8fafc), var(--text-secondary, #94a3b8));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.status-toast {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    padding: 1rem 1.5rem;
+    background: #1e293b;
+    border: 1px solid #10b981;
+    border-radius: 12px;
+    color: #10b981;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ──────────────────────────────────────────
+   Insights Section
+   ────────────────────────────────────────── */
+.insights-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    animation: slideIn 0.6s ease-out;
+}
+
+.insight-card {
+    background: var(--bg-card, #1e293b);
+    border: 1px solid var(--border-color, rgba(148, 163, 184, 0.1));
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.insight-card h4 {
+    margin-bottom: 1.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted, #64748b);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-progress-bg {
+    width: 100px;
+    height: 6px;
+    background: rgba(148, 163, 184, 0.1);
+    border-radius: 10px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.stat-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #a855f7);
+    border-radius: 10px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Donut Chart */
+.distribution-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.chart-donut {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.chart-donut:hover {
+    transform: scale(1.05);
+}
+
+.chart-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: var(--bg-card, #1e293b);
+    border-radius: 50%;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dot.client {
+    background: var(--cat-client);
+}
+
+.dot.tech {
+    background: var(--cat-techdebt);
+}
+
+.dot.rnd {
+    background: var(--cat-rnd);
+}
+
+/* ──────────────────────────────────────────
+   Icon specific gradients
+   ────────────────────────────────────────── */
+.setup-icon {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.freeze-icon {
+    background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+}
+
+.update-icon {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.progress-icon {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.backlog-icon {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.team-icon {
+    background: linear-gradient(135deg, #ec4899, #db2777);
+}
+
+.history-icon {
+    background: linear-gradient(135deg, #64748b, #475569);
+}
+
+.cancel-icon {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.complete-icon {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 900px) {
+    .insights-section {
+        grid-template-columns: 1fr;
+    }
+}

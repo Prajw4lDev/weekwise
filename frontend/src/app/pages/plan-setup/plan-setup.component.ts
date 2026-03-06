@@ -29,10 +29,10 @@ export class PlanSetupComponent implements OnInit {
     techDebtPercent = 30;
     rndPercent = 20;
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         // If no active plan, create one
         if (!this.planService.hasActivePlan()) {
-            this.planService.createPlan();
+            await this.planService.createPlan();
         }
 
         // Pre-select all active members
@@ -104,16 +104,16 @@ export class PlanSetupComponent implements OnInit {
     }
 
     /** Save and move the plan from Setup to Planning. */
-    savePlan(): void {
+    async savePlan(): Promise<void> {
         if (!this.canSave) return;
 
-        this.planService.setupPlan(
+        await this.planService.setupPlan(
             Array.from(this.selectedMemberIds),
             this.clientPercent,
             this.techDebtPercent,
             this.rndPercent
         );
 
-        this.router.navigate(['/home']);
+        this.router.navigate(['/home-admin']);
     }
 }

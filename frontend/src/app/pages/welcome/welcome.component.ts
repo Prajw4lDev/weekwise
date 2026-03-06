@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TeamService } from '../../services';
+import { TeamService, AuthService } from '../../services';
 
 /**
  * Welcome/Team Setup screen.
@@ -17,19 +17,31 @@ import { TeamService } from '../../services';
 export class WelcomeComponent {
     private router = inject(Router);
     teamService = inject(TeamService);
+    authService = inject(AuthService);
 
     /** New member name input. */
     newMemberName = '';
+    newMemberEmail = '';
+    newMemberPassword = '';
+    newMemberCapacity = 40;
 
     /** Add a member and clear the input. */
-    addMember(): void {
+    async addMember(): Promise<void> {
         const name = this.newMemberName.trim();
-        if (!name) return;
+        const email = this.newMemberEmail.trim();
+        const password = this.newMemberPassword.trim();
+        const capacity = this.newMemberCapacity;
+
+        if (!name || !email || !password) return;
 
         // First member becomes Lead automatically
-        const role = this.teamService.members().length === 0 ? 'Lead' as const : 'Member' as const;
-        this.teamService.addMember(name, role);
+        const role = this.teamService.members().length === 0 ? 'Admin' as const : 'Member' as const;
+        await this.teamService.addMember(name, email, role, password, capacity);
+
         this.newMemberName = '';
+        this.newMemberEmail = '';
+        this.newMemberPassword = '';
+        this.newMemberCapacity = 40;
     }
 
     /** Handle Enter key in the input. */
@@ -40,13 +52,13 @@ export class WelcomeComponent {
     }
 
     /** Set a member as the team lead. */
-    makeLead(memberId: string): void {
-        this.teamService.setLead(memberId);
+    async makeLead(memberId: string): Promise<void> {
+        await this.teamService.setLead(memberId);
     }
 
     /** Remove a member from the team. */
-    removeMember(memberId: string): void {
-        this.teamService.removeMember(memberId);
+    async removeMember(memberId: string): Promise<void> {
+        await this.teamService.removeMember(memberId);
     }
 
     /** Navigate to login if we have at least one lead. */

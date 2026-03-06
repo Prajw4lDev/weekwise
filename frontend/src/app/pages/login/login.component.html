@@ -1,25 +1,51 @@
-<section id="screen-login">
-    <h2 class="mb-sm">Who are you?</h2>
-    <p class="text-secondary mb-lg">Click your name to get started.</p>
-
-    @if (teamService.members().length === 0) {
-    <div class="glass-card no-hover" style="text-align:center; padding:var(--space-xl);">
-        <p class="text-muted mb-md">No team members found.</p>
-        <a class="btn btn-primary" routerLink="/welcome">Set Up Team First</a>
-    </div>
-    } @else {
-    <div class="grid-3">
-        @for (member of teamService.members(); track member.id; let i = $index) {
-        <div class="action-card login-card" (click)="selectUser(member)" id="login-{{ member.id }}">
-            <div class="avatar avatar-lg" [style.background]="getGradient(i)">{{ getInitial(member.name) }}</div>
-            <h3>{{ member.name }}</h3>
-            @if (member.role === 'Lead') {
-            <span class="badge badge-client" style="font-size:0.65rem; margin-top:4px;">👑 LEAD</span>
-            } @else {
-            <span class="text-muted" style="font-size:0.75rem; margin-top:4px;">Member</span>
-            }
+<div class="login-page-container">
+    <div class="login-card-premium">
+        <!-- Top Link -->
+        <div class="top-nav">
+            <a routerLink="/register" class="signup-link">Signup →</a>
         </div>
-        }
+
+        <!-- Content -->
+        <div class="login-content">
+            <h2 class="login-title">Here you can Login</h2>
+            <p class="login-subtitle">Let's join us :)</p>
+
+            <form (submit)="verifyLogin()" class="login-form">
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" [(ngModel)]="email" name="email" placeholder="Enter your email"
+                        class="premium-input" autofocus required>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" [(ngModel)]="password" name="password" placeholder="Enter password"
+                        class="premium-input" required>
+                </div>
+
+                @if (error) {
+                <div class="login-error">
+                    ⚠️ {{ error }}
+                </div>
+                }
+
+                <button type="submit" class="btn-login-gradient" [disabled]="!email || !password || isLoading">
+                    @if (isLoading) {
+                    <span class="spinner"></span>
+                    } @else {
+                    LOGIN
+                    }
+                </button>
+
+                <a href="#" class="forgot-password" (click)="$event.preventDefault()">Forgot your password?</a>
+            </form>
+        </div>
+
+        <!-- Wavy Background Decoration -->
+        <div class="wave-container">
+            <div class="wave wave1"></div>
+            <div class="wave wave2"></div>
+            <div class="wave wave3"></div>
+        </div>
     </div>
-    }
-</section>
+</div>

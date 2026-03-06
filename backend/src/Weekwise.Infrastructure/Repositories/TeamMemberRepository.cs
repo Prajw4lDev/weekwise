@@ -14,5 +14,5 @@ public class TeamMemberRepository : Repository<TeamMember>, ITeamMemberRepositor
         => await _dbSet.Where(m => m.IsActive).ToListAsync();
 
     public async Task<TeamMember?> GetLeadAsync()
-        => await _dbSet.FirstOrDefaultAsync(m => m.Role == MemberRole.Lead && m.IsActive);
+        => await _dbSet.FirstOrDefaultAsync(m => m.Role == "Admin" && m.IsActive);
 }
