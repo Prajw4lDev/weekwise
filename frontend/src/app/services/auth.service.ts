@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { TeamService } from './team.service';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface AuthResponse {
     token: string;
@@ -13,53 +14,41 @@ export interface AuthResponse {
     providedIn: 'root'
 })
 export class AuthService {
+    private http = inject(HttpClient);
+    private apiUrl = `${environment.apiUrl}/Auth`;
+    private invitationUrl = `${environment.apiUrl}/Invitation`;
+
     private currentUserSubject = new BehaviorSubject<AuthResponse | null>(null);
     public currentUser$ = this.currentUserSubject.asObservable();
-    private teamService = inject(TeamService);
 
     constructor() {
         const savedUser = localStorage.getItem('user');
         if (savedUser) {
-            this.currentUserSubject.next(JSON.parse(savedUser));
+            try {
+                this.currentUserSubject.next(JSON.parse(savedUser));
+            } catch {
+                this.logout();
+            }
         }
     }
 
     register(data: any): Observable<AuthResponse> {
-        return this.mockAuth(data.email || 'user@demo.com', data.name || 'Demo User', data.role || 'Member');
+        return this.http.post<AuthResponse>(`${this.apiUrl}/register`, data).pipe(
+            tap(user => this.setSession(user))
+        );
     }
 
     login(data: any): Observable<AuthResponse> {
-        const email = data.email || 'prajwal@demo.com';
-        const members = this.teamService.members();
-        // Since seed data may not be fully loaded synchronously on cold start before login is called, safe fallback
-        let name = 'Demo User';
-        let role = 'Admin';
-
-        if (members && members.length > 0) {
-            const member = members.find(m => m.email === email);
-            if (member) {
-                name = member.name;
-                role = member.role;
-            }
-        }
-
-        return this.mockAuth(email, name, role);
+        return this.http.post<AuthResponse>(`${this.apiUrl}/login`, data).pipe(
+            tap(user => this.setSession(user))
+        );
     }
 
-    private mockAuth(email: string, name: string, role: string): Observable<AuthResponse> {
-        const user: AuthResponse = {
-            token: 'mock-jwt-token-for-local-storage-demo',
-            name,
-            email,
-            role
-        };
-
+    private setSession(user: AuthResponse): void {
         localStorage.setItem('token', user.token);
         localStorage.setItem('role', user.role);
         localStorage.setItem('user', JSON.stringify(user));
         this.currentUserSubject.next(user);
-
-        return of(user);
     }
 
     logout(): void {
@@ -70,23 +59,25 @@ export class AuthService {
     }
 
     validateInviteToken(token: string): Observable<boolean> {
-        return of(true);
+        return this.http.get<boolean>(`${this.invitationUrl}/validate/${token}`);
     }
 
     getInvitation(token: string): Observable<any> {
-        return of({ email: 'newuser@demo.com', role: 'Member', isUsed: false });
+        return this.http.get<any>(`${this.invitationUrl}/${token}`);
     }
 
     registerWithInvite(data: any): Observable<AuthResponse> {
-        return this.mockAuth(data.email, data.name || 'Invited User', 'Member');
+        return this.http.post<AuthResponse>(`${this.apiUrl}/register-invite`, data).pipe(
+            tap(user => this.setSession(user))
+        );
     }
 
     createInvitation(email: string, role: string): Observable<any> {
-        return of({ id: Date.now(), email, role, token: 'mock-token', createdAt: new Date(), isUsed: false });
+        return this.http.post<any>(this.invitationUrl, { email, role });
     }
 
     getInvitations(): Observable<any[]> {
-        return of([]);
+        return this.http.get<any[]>(this.invitationUrl);
     }
 
     getToken(): string | null {
