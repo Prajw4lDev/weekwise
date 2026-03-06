@@ -8,6 +8,17 @@ public class DashboardOverviewDto
     public int TotalTasksCount { get; set; }
     public int CompletedTasksCount { get; set; }
     public int BlockedTasksCount { get; set; }
+    
+    // New Metrics for Phase 9
+    public int TotalMembersCount { get; set; }
+    public int TotalBacklogTasksCount { get; set; }
+    public double TotalPlannedHours { get; set; }
+}
+
+public class DashboardTrendDto
+{
+    public string Label { get; set; } = string.Empty; // e.g., "Mon", "Tue"
+    public double CompletedHours { get; set; }
 }
 
 public class DashboardCategoryDto

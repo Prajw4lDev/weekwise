@@ -1,0 +1,57 @@
+<div class="login-page-container">
+    <div class="login-card-premium">
+        <!-- Top Nav -->
+        <div class="top-nav">
+            <a routerLink="/login" class="signup-link">Login ←</a>
+        </div>
+
+        <!-- Content -->
+        <div class="login-content">
+            <h1 class="login-title">Join Weekwise</h1>
+            <p class="login-subtitle">Plan, Track, and Focus :)</p>
+
+            <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+                <div class="login-error" *ngIf="error">
+                    {{ error }}
+                </div>
+
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" [(ngModel)]="registerData.name" name="name" required class="premium-input"
+                        placeholder="Enter your name">
+                </div>
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" [(ngModel)]="registerData.email" name="email" required class="premium-input"
+                        placeholder="Enter your email">
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" [(ngModel)]="registerData.password" name="password" required
+                        class="premium-input" placeholder="Create a password">
+                </div>
+
+                <div class="input-group">
+                    <label>Your Role</label>
+                    <select [(ngModel)]="registerData.role" name="role" class="premium-input" style="appearance: auto;">
+                        <option value="Member">Team Member</option>
+                        <option value="Admin">Team Lead</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-login-gradient" [disabled]="!registerForm.valid || isLoading">
+                    {{ isLoading ? 'CREATING...' : 'SIGN UP' }}
+                </button>
+            </form>
+        </div>
+
+        <!-- Waves -->
+        <div class="wave-container">
+            <div class="wave wave1"></div>
+            <div class="wave wave2"></div>
+            <div class="wave wave3"></div>
+        </div>
+    </div>
+</div>

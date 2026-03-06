@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BacklogService } from '../../services';
+import { BacklogService, AuthService } from '../../services';
 import { BacklogItem, ItemCategory } from '../../models';
 
 /**
@@ -15,6 +15,7 @@ import { BacklogItem, ItemCategory } from '../../models';
 })
 export class BacklogComponent {
     backlogService = inject(BacklogService);
+    authService = inject(AuthService);
 
     /** Currently active filter tab. */
     activeFilter: ItemCategory | 'All' = 'All';
@@ -60,18 +61,18 @@ export class BacklogComponent {
     }
 
     /** Save the form — add or update. */
-    saveItem(): void {
+    async saveItem(): Promise<void> {
         if (!this.formTitle.trim() || !this.formCategory || !this.formEstimatedHours) return;
 
         if (this.editingItemId) {
-            this.backlogService.updateItem(this.editingItemId, {
+            await this.backlogService.updateItem(this.editingItemId, {
                 title: this.formTitle.trim(),
                 description: this.formDescription.trim(),
                 category: this.formCategory as ItemCategory,
                 estimatedHours: this.formEstimatedHours
             });
         } else {
-            this.backlogService.addItem(
+            await this.backlogService.addItem(
                 this.formTitle,
                 this.formDescription,
                 this.formCategory as ItemCategory,
@@ -89,8 +90,8 @@ export class BacklogComponent {
     }
 
     /** Delete a backlog item. */
-    deleteItem(id: string): void {
-        this.backlogService.deleteItem(id);
+    async deleteItem(id: string): Promise<void> {
+        await this.backlogService.deleteItem(id);
     }
 
     /** Reset form fields. */

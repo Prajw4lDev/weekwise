@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, effect } from '@angular/core';
 import {
     ProgressUpdate, TaskStatus, WorkCommitment,
     MemberProgressSummary, ItemCategory
@@ -10,6 +10,7 @@ import { TeamService } from './team.service';
 /**
  * Service for tracking progress on frozen plan commitments.
  * Handles progress updates, calculates summaries by member and category.
+ * Uses localStorage instead of .NET Backend API.
  */
 @Injectable({ providedIn: 'root' })
 export class ProgressService {
@@ -19,54 +20,84 @@ export class ProgressService {
     private backlogService = inject(BacklogService);
     private teamService = inject(TeamService);
 
-    /** All progress updates for the current plan. */
-    private _updates = signal<ProgressUpdate[]>(this.loadFromStorage());
+    /** All progress updates for the current plan (latest per commitment). */
+    private _updates = signal<ProgressUpdate[]>([]);
 
     readonly updates = this._updates.asReadonly();
 
-    private loadFromStorage(): ProgressUpdate[] {
-        const data = localStorage.getItem(this.STORAGE_KEY);
-        return data ? JSON.parse(data) : [];
+    constructor() {
+        // Automatically reload progress whenever the current plan changes
+        effect(() => {
+            const plan = this.planService.currentPlan();
+            if (plan && plan.status === 'Frozen') {
+                this.loadAllLatestProgress();
+            } else {
+                this._updates.set([]);
+            }
+        });
     }
 
-    private saveToStorage(): void {
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this._updates()));
+    private saveUpdates(updates: ProgressUpdate[]): void {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(updates));
     }
 
-    private generateId(): string {
-        return crypto.randomUUID();
+    /** Load latest progress for all commitments of the current plan. */
+    async loadAllLatestProgress(): Promise<void> {
+        const commitments = this.planService.commitments();
+        if (commitments.length === 0) return;
+
+        const stored = localStorage.getItem(this.STORAGE_KEY);
+        if (stored) {
+            const allUpdates: ProgressUpdate[] = JSON.parse(stored);
+            // Only keep updates for current commitments
+            const validUpdates = allUpdates.filter(u => commitments.some(c => c.id === u.workCommitmentId));
+            this._updates.set(validUpdates);
+        }
+    }
+
+    /** Get all current updates in memory (used by DataService). */
+    getAll(): ProgressUpdate[] {
+        return this._updates();
+    }
+
+    /** Bulk set updates (used by DataService). */
+    setAll(updates: ProgressUpdate[]): void {
+        this._updates.set(updates);
+        this.saveUpdates(updates);
+    }
+
+    /** Clear all updates (used by DataService). */
+    clear(): void {
+        this._updates.set([]);
+        localStorage.removeItem(this.STORAGE_KEY);
     }
 
     // --- Progress Updates ---
 
-    /** Update progress on a commitment. Creates a new ProgressUpdate entry. */
-    updateProgress(commitmentId: string, hoursCompleted: number, status: TaskStatus, notes: string): ProgressUpdate {
+    /** Update progress on a commitment. */
+    async updateProgress(commitmentId: string, hoursCompleted: number, status: TaskStatus, notes: string): Promise<ProgressUpdate> {
         const update: ProgressUpdate = {
-            id: this.generateId(),
+            id: Date.now().toString(),
             workCommitmentId: commitmentId,
             hoursCompleted,
             status,
             notes: notes.trim(),
             updatedAt: new Date().toISOString()
         };
-        this._updates.update(u => [...u, update]);
-        this.saveToStorage();
+
+        this._updates.update(u => {
+            const filtered = u.filter(x => x.workCommitmentId !== commitmentId);
+            const updated = [...filtered, update];
+            this.saveUpdates(updated);
+            return updated;
+        });
+
         return update;
     }
 
-    /** Get the latest progress update for a commitment. */
+    /** Get the latest progress update for a commitment from local signal. */
     getLatestUpdate(commitmentId: string): ProgressUpdate | undefined {
-        const updates = this._updates()
-            .filter(u => u.workCommitmentId === commitmentId)
-            .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-        return updates[0];
-    }
-
-    /** Get all updates for a commitment (chronological). */
-    getUpdateHistory(commitmentId: string): ProgressUpdate[] {
-        return this._updates()
-            .filter(u => u.workCommitmentId === commitmentId)
-            .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+        return this._updates().find(u => u.workCommitmentId === commitmentId);
     }
 
     /** Get the current hours done for a commitment. */
@@ -173,24 +204,5 @@ export class ProgressService {
 
         const percent = committed > 0 ? Math.round((done / committed) * 100) : 0;
         return { committed, done, percent };
-    }
-
-    // --- Data Management ---
-
-    /** Replace all progress data (used by data import). */
-    setAll(updates: ProgressUpdate[]): void {
-        this._updates.set(updates);
-        this.saveToStorage();
-    }
-
-    /** Clear all progress data. */
-    clear(): void {
-        this._updates.set([]);
-        this.saveToStorage();
-    }
-
-    /** Get all updates for archiving. */
-    getAll(): ProgressUpdate[] {
-        return [...this._updates()];
     }
 }

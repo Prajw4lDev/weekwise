@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Weekwise.Core.DTOs.Dashboard;
 using Weekwise.Core.Interfaces;
@@ -6,6 +7,7 @@ namespace Weekwise.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class DashboardController : ControllerBase
 {
     private readonly IDashboardService _service;
@@ -53,6 +55,21 @@ public class DashboardController : ControllerBase
         {
             var summary = await _service.GetMemberProgressAsync();
             return Ok(summary);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>Get weekly progress trend.</summary>
+    [HttpGet("trend")]
+    public async Task<ActionResult<IEnumerable<DashboardTrendDto>>> GetTrend()
+    {
+        try
+        {
+            var trend = await _service.GetWeeklyTrendAsync();
+            return Ok(trend);
         }
         catch (InvalidOperationException ex)
         {

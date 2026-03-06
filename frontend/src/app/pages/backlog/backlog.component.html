@@ -1,7 +1,10 @@
 <section id="screen-backlog">
     <div class="flex items-center justify-between mb-lg">
-        <h2><span class="icon">📋</span> Manage Backlog</h2>
+        <h2><span class="icon">📋</span> {{ authService.getRole() === 'Admin' ? 'Manage Backlog' : 'View Backlog' }}
+        </h2>
+        @if (authService.getRole() === 'Admin') {
         <button class="btn btn-primary" (click)="openAddForm()" id="add-item-btn">+ Add Item</button>
+        }
     </div>
 
     <!-- Filter tabs -->
@@ -60,7 +63,11 @@
     @if (filteredItems.length === 0) {
     <div class="glass-card no-hover" style="text-align:center; padding:var(--space-xl);">
         <p class="text-muted mb-sm">No backlog items yet.</p>
+        @if (authService.getRole() === 'Admin') {
         <p class="text-secondary">Click <strong>"+ Add Item"</strong> to create your first work item.</p>
+        } @else {
+        <p class="text-secondary">Backlog items added by the Team Lead will appear here.</p>
+        }
     </div>
     } @else {
     <div class="glass-card no-hover">
@@ -83,11 +90,15 @@
                     <td>{{ item.estimatedHours }}h</td>
                     <td class="text-secondary">{{ item.description }}</td>
                     <td>
+                        @if (authService.getRole() === 'Admin') {
                         <div class="flex gap-xs">
                             <button class="btn btn-icon btn-ghost" (click)="openEditForm(item)" title="Edit">✏️</button>
                             <button class="btn btn-icon btn-ghost" style="color:var(--status-blocked);"
                                 (click)="deleteItem(item.id)" title="Delete">🗑️</button>
                         </div>
+                        } @else {
+                        <span class="text-muted" style="font-size:0.8rem;">View Only</span>
+                        }
                     </td>
                 </tr>
                 }

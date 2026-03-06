@@ -1,11 +1,13 @@
-using Microsoft.AspNetCore.Mvc;
 using Weekwise.Core.DTOs.TeamMember;
 using Weekwise.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Weekwise.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class TeamController : ControllerBase
 {
     private readonly ITeamMemberService _service;
@@ -34,6 +36,7 @@ public class TeamController : ControllerBase
 
     /// <summary>Add a new team member.</summary>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<TeamMemberDto>> Create([FromBody] CreateTeamMemberDto dto)
     {
         var member = await _service.CreateAsync(dto);
@@ -42,6 +45,7 @@ public class TeamController : ControllerBase
 
     /// <summary>Update a team member.</summary>
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<TeamMemberDto>> Update(Guid id, [FromBody] UpdateTeamMemberDto dto)
     {
         try
@@ -61,6 +65,7 @@ public class TeamController : ControllerBase
 
     /// <summary>Delete a team member.</summary>
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> Delete(Guid id)
     {
         try
@@ -80,6 +85,7 @@ public class TeamController : ControllerBase
 
     /// <summary>Set a member as Lead (demotes all other leads).</summary>
     [HttpPatch("{id}/set-lead")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<TeamMemberDto>> SetLead(Guid id)
     {
         try
@@ -92,4 +98,5 @@ public class TeamController : ControllerBase
             return NotFound(new { error = ex.Message });
         }
     }
+
 }

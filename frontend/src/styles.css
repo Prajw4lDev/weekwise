@@ -5,52 +5,6 @@
 
 /* --- CSS Custom Properties (Design Tokens) --- */
 :root {
-  /* Background layers */
-  --bg-primary: #0d1117;
-  --bg-secondary: #161b22;
-  --bg-tertiary: #21262d;
-  --bg-card: rgba(255, 255, 255, 0.04);
-  --bg-card-hover: rgba(255, 255, 255, 0.07);
-  --bg-glass: rgba(255, 255, 255, 0.05);
-  --bg-glass-border: rgba(255, 255, 255, 0.08);
-  --bg-input: rgba(255, 255, 255, 0.06);
-  --bg-modal-overlay: rgba(0, 0, 0, 0.6);
-
-  /* Text */
-  --text-primary: #e6edf3;
-  --text-secondary: #8b949e;
-  --text-muted: #6e7681;
-  --text-inverse: #0d1117;
-
-  /* Accent / Brand */
-  --accent-primary: #6366f1;
-  --accent-secondary: #8b5cf6;
-  --accent-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
-  --accent-glow: rgba(99, 102, 241, 0.25);
-
-  /* Category Colors */
-  --cat-client: #10b981;
-  --cat-client-bg: rgba(16, 185, 129, 0.12);
-  --cat-techdebt: #f59e0b;
-  --cat-techdebt-bg: rgba(245, 158, 11, 0.12);
-  --cat-rnd: #3b82f6;
-  --cat-rnd-bg: rgba(59, 130, 246, 0.12);
-
-  /* Status Colors */
-  --status-notstarted: #6e7681;
-  --status-inprogress: #3b82f6;
-  --status-done: #10b981;
-  --status-blocked: #ef4444;
-
-  /* Borders & Shadows */
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-default: rgba(255, 255, 255, 0.1);
-  --border-accent: rgba(99, 102, 241, 0.4);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
-
   /* Radius */
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -73,6 +27,82 @@
   --transition-fast: 150ms ease;
   --transition-normal: 250ms ease;
   --transition-slow: 400ms ease;
+
+  /* Status Colors (Shared) */
+  --status-notstarted: #6e7681;
+  --status-inprogress: #3b82f6;
+  --status-done: #10b981;
+  --status-blocked: #ef4444;
+
+  /* Accent / Brand (Shared) */
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+  --accent-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+  --accent-glow: rgba(99, 102, 241, 0.25);
+
+  /* Category Colors (Shared) */
+  --cat-client: #10b981;
+  --cat-client-bg: rgba(16, 185, 129, 0.12);
+  --cat-techdebt: #f59e0b;
+  --cat-techdebt-bg: rgba(245, 158, 11, 0.12);
+  --cat-rnd: #3b82f6;
+  --cat-rnd-bg: rgba(59, 130, 246, 0.12);
+}
+
+.dark-theme {
+  /* Background layers */
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-glass-border: rgba(255, 255, 255, 0.08);
+  --bg-input: rgba(255, 255, 255, 0.06);
+  --bg-modal-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Text */
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #6e7681;
+  --text-inverse: #0d1117;
+
+  /* Borders & Shadows */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.1);
+  --border-accent: rgba(99, 102, 241, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+}
+
+.light-theme {
+  /* Background layers */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-card: rgba(0, 0, 0, 0.02);
+  --bg-card-hover: rgba(0, 0, 0, 0.04);
+  --bg-glass: rgba(255, 255, 255, 0.7);
+  --bg-glass-border: rgba(0, 0, 0, 0.05);
+  --bg-input: #ffffff;
+  --bg-modal-overlay: rgba(15, 23, 42, 0.5);
+
+  /* Text */
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+
+  /* Borders & Shadows */
+  --border-subtle: rgba(0, 0, 0, 0.05);
+  --border-default: rgba(0, 0, 0, 0.08);
+  --border-accent: rgba(99, 102, 241, 0.3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 15px rgba(99, 102, 241, 0.1);
 }
 
 /* --- Reset & Base --- */
@@ -125,16 +155,30 @@ a:hover {
 }
 
 /* --- Typography Utilities --- */
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   color: var(--text-primary);
   font-weight: 700;
   line-height: 1.2;
 }
 
-h1 { font-size: 1.75rem; }
-h2 { font-size: 1.35rem; }
-h3 { font-size: 1.1rem; }
-h4 { font-size: 0.95rem; }
+h1 {
+  font-size: 1.75rem;
+}
+
+h2 {
+  font-size: 1.35rem;
+}
+
+h3 {
+  font-size: 1.1rem;
+}
+
+h4 {
+  font-size: 0.95rem;
+}
 
 .text-gradient {
   background: var(--accent-gradient);
@@ -520,26 +564,78 @@ textarea.form-input {
 }
 
 /* --- Flexbox Helpers --- */
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.flex-wrap { flex-wrap: wrap; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.justify-center { justify-content: center; }
-.gap-xs { gap: var(--space-xs); }
-.gap-sm { gap: var(--space-sm); }
-.gap-md { gap: var(--space-md); }
-.gap-lg { gap: var(--space-lg); }
-.gap-xl { gap: var(--space-xl); }
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-xs {
+  gap: var(--space-xs);
+}
+
+.gap-sm {
+  gap: var(--space-sm);
+}
+
+.gap-md {
+  gap: var(--space-md);
+}
+
+.gap-lg {
+  gap: var(--space-lg);
+}
+
+.gap-xl {
+  gap: var(--space-xl);
+}
 
 /* --- Spacing --- */
-.mt-sm { margin-top: var(--space-sm); }
-.mt-md { margin-top: var(--space-md); }
-.mt-lg { margin-top: var(--space-lg); }
-.mt-xl { margin-top: var(--space-xl); }
-.mb-sm { margin-bottom: var(--space-sm); }
-.mb-md { margin-bottom: var(--space-md); }
-.mb-lg { margin-bottom: var(--space-lg); }
+.mt-sm {
+  margin-top: var(--space-sm);
+}
+
+.mt-md {
+  margin-top: var(--space-md);
+}
+
+.mt-lg {
+  margin-top: var(--space-lg);
+}
+
+.mt-xl {
+  margin-top: var(--space-xl);
+}
+
+.mb-sm {
+  margin-bottom: var(--space-sm);
+}
+
+.mb-md {
+  margin-bottom: var(--space-md);
+}
+
+.mb-lg {
+  margin-bottom: var(--space-lg);
+}
 
 /* --- Modal Overlay --- */
 .modal-overlay {
@@ -721,6 +817,84 @@ textarea.form-input {
   text-transform: uppercase;
 }
 
+/* --- Animations --- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeInUp var(--transition-slow) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) both;
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--transition-normal) both;
+}
+
+/* Stagger delay for grid items */
+.grid-auto>*,
+.grid-2>*,
+.grid-3>* {
+  animation: fadeInUp var(--transition-slow) both;
+}
+
+.grid-auto>*:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.grid-auto>*:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.grid-auto>*:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.grid-auto>*:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.grid-auto>*:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.grid-auto>*:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
 /* --- Tag / Filter Tab --- */
 .filter-tabs {
   display: flex;
@@ -821,6 +995,7 @@ textarea.form-input {
   text-align: center;
   padding: var(--space-2xl) var(--space-lg);
   color: var(--text-muted);
+  animation: fadeIn var(--transition-slow) both;
 }
 
 .empty-state .empty-icon {
@@ -879,9 +1054,21 @@ textarea.form-input {
   text-transform: uppercase;
 }
 
+/* --- Dashboard Header --- */
+.dashboard-title {
+  animation: fadeInUp var(--transition-slow) both;
+}
+
+.text-secondary.mb-lg {
+  animation: fadeInUp var(--transition-slow) both;
+  animation-delay: 0.05s;
+}
+
 /* --- Responsive --- */
 @media (max-width: 768px) {
-  .grid-2, .grid-3 {
+
+  .grid-2,
+  .grid-3 {
     grid-template-columns: 1fr;
   }
 

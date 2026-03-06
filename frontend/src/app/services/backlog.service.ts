@@ -3,72 +3,88 @@ import { BacklogItem, ItemCategory } from '../models';
 
 /**
  * Service for managing backlog items.
- * Provides CRUD operations and category filtering.
- * All data persisted to localStorage.
+ * Uses localStorage instead of .NET Backend.
  */
 @Injectable({ providedIn: 'root' })
 export class BacklogService {
     private readonly STORAGE_KEY = 'weekwise-backlog';
 
     /** Reactive signal holding all backlog items. */
-    private _items = signal<BacklogItem[]>(this.loadFromStorage());
+    private _items = signal<BacklogItem[]>([]);
 
     /** Read-only signal of all items. */
     readonly items = this._items.asReadonly();
 
+    /** Bulk set items (used by DataService). */
+    setAll(items: BacklogItem[]): void {
+        this._items.set(items);
+        this.saveItems(items);
+    }
+
     /** Computed: only non-archived items. */
     readonly activeItems = computed(() => this._items().filter(i => !i.isArchived));
+
+    constructor() {
+        this.loadItems();
+    }
+
+    private saveItems(items: BacklogItem[]): void {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(items));
+    }
+
+    /** Load items from the backend/localStorage. */
+    async loadItems(): Promise<void> {
+        const stored = localStorage.getItem(this.STORAGE_KEY);
+        if (stored) {
+            this._items.set(JSON.parse(stored));
+        }
+    }
 
     /** Get items filtered by category. */
     getByCategory(category: ItemCategory): BacklogItem[] {
         return this.activeItems().filter(i => i.category === category);
     }
 
-    private generateId(): string {
-        return crypto.randomUUID();
-    }
-
-    private loadFromStorage(): BacklogItem[] {
-        const data = localStorage.getItem(this.STORAGE_KEY);
-        return data ? JSON.parse(data) : [];
-    }
-
-    private saveToStorage(): void {
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this._items()));
-    }
-
     /** Add a new backlog item. */
-    addItem(title: string, description: string, category: ItemCategory, estimatedHours: number): BacklogItem {
+    async addItem(title: string, description: string, category: ItemCategory, estimatedHours: number): Promise<BacklogItem> {
         const item: BacklogItem = {
-            id: this.generateId(),
+            id: Date.now().toString(),
             title: title.trim(),
             description: description.trim(),
             category,
             estimatedHours,
             isArchived: false
         };
-        this._items.update(items => [...items, item]);
-        this.saveToStorage();
+
+        this._items.update(items => {
+            const updated = [...items, item];
+            this.saveItems(updated);
+            return updated;
+        });
         return item;
     }
 
     /** Update an existing backlog item. */
-    updateItem(id: string, changes: Partial<Omit<BacklogItem, 'id'>>): void {
-        this._items.update(items =>
-            items.map(i => i.id === id ? { ...i, ...changes } : i)
-        );
-        this.saveToStorage();
+    async updateItem(id: string, changes: Partial<Omit<BacklogItem, 'id'>>): Promise<void> {
+        this._items.update(items => {
+            const updated = items.map(i => i.id === id ? { ...i, ...changes } : i);
+            this.saveItems(updated);
+            return updated;
+        });
     }
 
     /** Archive a backlog item (soft delete). */
-    archiveItem(id: string): void {
-        this.updateItem(id, { isArchived: true });
+    async archiveItem(id: string): Promise<void> {
+        this.updateLocalItemState(id, { isArchived: true });
     }
 
     /** Permanently delete a backlog item. */
-    deleteItem(id: string): void {
-        this._items.update(items => items.filter(i => i.id !== id));
-        this.saveToStorage();
+    async deleteItem(id: string): Promise<void> {
+        this._items.update(items => {
+            const updated = items.filter(i => i.id !== id);
+            this.saveItems(updated);
+            return updated;
+        });
     }
 
     /** Get a single item by ID. */
@@ -76,9 +92,11 @@ export class BacklogService {
         return this._items().find(i => i.id === id);
     }
 
-    /** Replace all items (used by data import). */
-    setAll(items: BacklogItem[]): void {
-        this._items.set(items);
-        this.saveToStorage();
+    private updateLocalItemState(id: string, changes: Partial<BacklogItem>): void {
+        this._items.update(items => {
+            const updated = items.map(i => i.id === id ? { ...i, ...changes } : i);
+            this.saveItems(updated);
+            return updated;
+        });
     }
 }

@@ -55,6 +55,48 @@ namespace Weekwise.Infrastructure.Migrations
                     b.ToTable("BacklogItems");
                 });
 
+            modelBuilder.Entity("Weekwise.Core.Entities.Invitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("AcceptedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.ToTable("Invitations");
+                });
+
             modelBuilder.Entity("Weekwise.Core.Entities.PlanMember", b =>
                 {
                     b.Property<Guid>("Id")
@@ -117,6 +159,10 @@ namespace Weekwise.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
@@ -127,16 +173,75 @@ namespace Weekwise.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("WeeklyCapacityHours")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Name");
 
                     b.ToTable("TeamMembers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Email = "prajwal@demo.com",
+                            IsActive = true,
+                            Name = "Prajwal Dinde",
+                            PasswordHash = "seeded",
+                            Role = "Admin",
+                            WeeklyCapacityHours = 40
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Email = "ajay@demo.com",
+                            IsActive = true,
+                            Name = "Ajay more",
+                            PasswordHash = "seeded",
+                            Role = "Member",
+                            WeeklyCapacityHours = 40
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            Email = "om@demo.com",
+                            IsActive = true,
+                            Name = "Om Patil",
+                            PasswordHash = "seeded",
+                            Role = "Member",
+                            WeeklyCapacityHours = 40
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
+                            Email = "yash@demo.com",
+                            IsActive = true,
+                            Name = "Yash Gaikwad",
+                            PasswordHash = "seeded",
+                            Role = "Member",
+                            WeeklyCapacityHours = 40
+                        },
+                        new
+                        {
+                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
+                            Email = "jay@demo.com",
+                            IsActive = true,
+                            Name = "Jay Sharma",
+                            PasswordHash = "seeded",
+                            Role = "Member",
+                            WeeklyCapacityHours = 40
+                        });
                 });
 
             modelBuilder.Entity("Weekwise.Core.Entities.WeeklyPlan", b =>

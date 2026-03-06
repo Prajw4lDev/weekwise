@@ -3,7 +3,6 @@ using Moq;
 using Weekwise.Api.Mappings;
 using Weekwise.Core.DTOs.TeamMember;
 using Weekwise.Core.Entities;
-using Weekwise.Core.Enums;
 using Weekwise.Core.Interfaces;
 using Weekwise.Infrastructure.Services;
 
@@ -13,6 +12,8 @@ public class TeamMemberServiceTests
 {
     private readonly Mock<ITeamMemberRepository> _repoMock;
     private readonly Mock<IWorkCommitmentRepository> _commitMock;
+    private readonly Mock<IInvitationRepository> _invitationMock;
+    private readonly Mock<IJwtService> _jwtMock;
     private readonly IMapper _mapper;
     private readonly TeamMemberService _service;
 
@@ -20,11 +21,14 @@ public class TeamMemberServiceTests
     {
         _repoMock = new Mock<ITeamMemberRepository>();
         _commitMock = new Mock<IWorkCommitmentRepository>();
+        _invitationMock = new Mock<IInvitationRepository>();
+        _jwtMock = new Mock<IJwtService>();
+        _jwtMock.Setup(j => j.GenerateToken(It.IsAny<TeamMember>())).Returns("test-token");
 
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
         _mapper = config.CreateMapper();
 
-        _service = new TeamMemberService(_repoMock.Object, _commitMock.Object, _mapper);
+        _service = new TeamMemberService(_repoMock.Object, _commitMock.Object, _invitationMock.Object, _mapper, _jwtMock.Object);
     }
 
     [Fact]
@@ -32,8 +36,8 @@ public class TeamMemberServiceTests
     {
         var members = new List<TeamMember>
         {
-            new() { Id = Guid.NewGuid(), Name = "Alice", Role = MemberRole.Lead, IsActive = true },
-            new() { Id = Guid.NewGuid(), Name = "Bob", Role = MemberRole.Member, IsActive = true }
+            new() { Id = Guid.NewGuid(), Name = "Alice", Role = "Admin", IsActive = true },
+            new() { Id = Guid.NewGuid(), Name = "Bob", Role = "Member", IsActive = true }
         };
         _repoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(members);
 
@@ -43,7 +47,7 @@ public class TeamMemberServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_FirstMember_AutoBecomesLead()
+    public async Task CreateAsync_FirstMember_AutoBecomesAdmin()
     {
         _repoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<TeamMember>());
         _repoMock.Setup(r => r.AddAsync(It.IsAny<TeamMember>())).ReturnsAsync((TeamMember t) => t);
@@ -51,7 +55,7 @@ public class TeamMemberServiceTests
         var dto = new CreateTeamMemberDto { Name = "Alice" };
         var result = await _service.CreateAsync(dto);
 
-        Assert.Equal(MemberRole.Lead, result.Role);
+        Assert.Equal("Admin", result.Role);
     }
 
     [Fact]
@@ -59,14 +63,14 @@ public class TeamMemberServiceTests
     {
         _repoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<TeamMember>
         {
-            new() { Id = Guid.NewGuid(), Name = "Alice", Role = MemberRole.Lead }
+            new() { Id = Guid.NewGuid(), Name = "Alice", Role = "Admin" }
         });
         _repoMock.Setup(r => r.AddAsync(It.IsAny<TeamMember>())).ReturnsAsync((TeamMember t) => t);
 
         var dto = new CreateTeamMemberDto { Name = "Bob" };
         var result = await _service.CreateAsync(dto);
 
-        Assert.Equal(MemberRole.Member, result.Role);
+        Assert.Equal("Member", result.Role);
     }
 
     [Fact]
@@ -81,7 +85,7 @@ public class TeamMemberServiceTests
     public async Task DeleteAsync_MemberWithCommitments_ThrowsInvalidOp()
     {
         var id = Guid.NewGuid();
-        _repoMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(new TeamMember { Id = id, Name = "Bob", Role = MemberRole.Member });
+        _repoMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(new TeamMember { Id = id, Name = "Bob", Role = "Member" });
         _commitMock.Setup(r => r.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<WorkCommitment, bool>>>()))
             .ReturnsAsync(new List<WorkCommitment> { new() });
 
@@ -89,10 +93,10 @@ public class TeamMemberServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_OnlyLead_ThrowsInvalidOp()
+    public async Task DeleteAsync_OnlyAdmin_ThrowsInvalidOp()
     {
         var id = Guid.NewGuid();
-        var lead = new TeamMember { Id = id, Name = "Alice", Role = MemberRole.Lead, IsActive = true };
+        var lead = new TeamMember { Id = id, Name = "Alice", Role = "Admin", IsActive = true };
         _repoMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(lead);
         _commitMock.Setup(r => r.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<WorkCommitment, bool>>>()))
             .ReturnsAsync(new List<WorkCommitment>());
@@ -104,8 +108,8 @@ public class TeamMemberServiceTests
     [Fact]
     public async Task SetLeadAsync_PromotesMemberAndDemotesExisting()
     {
-        var currentLead = new TeamMember { Id = Guid.NewGuid(), Name = "Alice", Role = MemberRole.Lead, IsActive = true };
-        var newLead = new TeamMember { Id = Guid.NewGuid(), Name = "Bob", Role = MemberRole.Member, IsActive = true };
+        var currentLead = new TeamMember { Id = Guid.NewGuid(), Name = "Alice", Role = "Admin", IsActive = true };
+        var newLead = new TeamMember { Id = Guid.NewGuid(), Name = "Bob", Role = "Member", IsActive = true };
 
         _repoMock.Setup(r => r.GetByIdAsync(newLead.Id)).ReturnsAsync(newLead);
         _repoMock.Setup(r => r.GetActiveMembersAsync()).ReturnsAsync(new List<TeamMember> { currentLead, newLead });
@@ -113,19 +117,19 @@ public class TeamMemberServiceTests
 
         var result = await _service.SetLeadAsync(newLead.Id);
 
-        Assert.Equal(MemberRole.Lead, result.Role);
-        Assert.Equal(MemberRole.Member, currentLead.Role);
+        Assert.Equal("Admin", result.Role);
+        Assert.Equal("Member", currentLead.Role);
     }
 
     [Fact]
-    public async Task UpdateAsync_DemoteOnlyLead_ThrowsInvalidOp()
+    public async Task UpdateAsync_DemoteOnlyAdmin_ThrowsInvalidOp()
     {
         var id = Guid.NewGuid();
-        var lead = new TeamMember { Id = id, Name = "Alice", Role = MemberRole.Lead, IsActive = true };
+        var lead = new TeamMember { Id = id, Name = "Alice", Role = "Admin", IsActive = true };
         _repoMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(lead);
         _repoMock.Setup(r => r.GetActiveMembersAsync()).ReturnsAsync(new List<TeamMember> { lead });
 
-        var dto = new UpdateTeamMemberDto { Name = "Alice", Role = MemberRole.Member, IsActive = true };
+        var dto = new UpdateTeamMemberDto { Name = "Alice", Role = "Member", IsActive = true };
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => _service.UpdateAsync(id, dto));
     }

@@ -13,6 +13,10 @@ import { UpdateProgressComponent } from './pages/update-progress/update-progress
 import { TeamProgressComponent } from './pages/team-progress/team-progress.component';
 import { TaskDetailComponent } from './pages/task-detail/task-detail.component';
 import { PastWeeksComponent } from './pages/past-weeks/past-weeks.component';
+import { RegisterComponent } from './pages/register/register.component';
+import { AcceptInviteComponent } from './pages/accept-invite/accept-invite.component';
+import { TeamManagementComponent } from './pages/team-management/team-management.component';
+import { RoleGuard } from './guards/role.guard';
 
 /**
  * Application routes.
@@ -22,19 +26,22 @@ import { PastWeeksComponent } from './pages/past-weeks/past-weeks.component';
  * Shared routes: /backlog, /progress, /task-detail, /past-weeks
  */
 export const routes: Routes = [
-    { path: '', redirectTo: 'welcome', pathMatch: 'full' },
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'welcome', component: WelcomeComponent },
     { path: 'login', component: LoginComponent },
-    { path: 'home', component: HomeComponent },
-    { path: 'home-member', component: HomeMemberComponent },
-    { path: 'backlog', component: BacklogComponent },
-    { path: 'plan-setup', component: PlanSetupComponent },
-    { path: 'my-plan', component: MyPlanComponent },
-    { path: 'pick-item', component: PickItemComponent },
-    { path: 'review', component: ReviewFreezeComponent },
-    { path: 'update-progress', component: UpdateProgressComponent },
-    { path: 'progress', component: TeamProgressComponent },
-    { path: 'task-detail', component: TaskDetailComponent },
-    { path: 'past-weeks', component: PastWeeksComponent },
-    { path: '**', redirectTo: 'welcome' },
+    { path: 'register', component: RegisterComponent },
+    { path: 'accept-invite', component: AcceptInviteComponent },
+    { path: 'home-admin', component: HomeComponent, canActivate: [RoleGuard], data: { role: 'Admin' } },
+    { path: 'team-management', component: TeamManagementComponent, canActivate: [RoleGuard], data: { role: 'Admin' } },
+    { path: 'home-member', component: HomeMemberComponent, canActivate: [RoleGuard], data: { role: 'Member' } },
+    { path: 'backlog', component: BacklogComponent, canActivate: [RoleGuard] },
+    { path: 'plan-setup', component: PlanSetupComponent, canActivate: [RoleGuard], data: { role: 'Admin' } },
+    { path: 'my-plan', component: MyPlanComponent, canActivate: [RoleGuard], data: { role: 'Member' } },
+    { path: 'pick-item', component: PickItemComponent, canActivate: [RoleGuard], data: { role: 'Member' } },
+    { path: 'review-plan', component: ReviewFreezeComponent, canActivate: [RoleGuard], data: { role: 'Admin' } },
+    { path: 'update-progress', component: UpdateProgressComponent, canActivate: [RoleGuard], data: { role: 'Member' } },
+    { path: 'team-progress', component: TeamProgressComponent, canActivate: [RoleGuard] },
+    { path: 'task-detail', component: TaskDetailComponent, canActivate: [RoleGuard] },
+    { path: 'past-weeks', component: PastWeeksComponent, canActivate: [RoleGuard] },
+    { path: '**', redirectTo: 'login' },
 ];
