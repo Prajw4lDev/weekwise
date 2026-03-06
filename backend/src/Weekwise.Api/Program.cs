@@ -117,15 +117,17 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 
-app.MapGet("/", () => Results.Ok(new { status = "Weekwise API running" }));
-
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<WeekwiseDbContext>();
     context.Database.EnsureCreated();
 
-    var dataService = scope.ServiceProvider.GetRequiredService<IDataService>();
-    await dataService.SeedDemoDataAsync();
+    // Only seed if there are no members
+    if (!await context.TeamMembers.AnyAsync())
+    {
+        var dataService = scope.ServiceProvider.GetRequiredService<IDataService>();
+        await dataService.SeedDemoDataAsync();
+    }
 }
 
 app.Run();
