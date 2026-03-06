@@ -1,3 +1,12 @@
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { PlanService } from '../../services/plan.service';
+import { TeamService } from '../../services/team.service';
+import { BacklogService } from '../../services/backlog.service';
+import { CategoryBudget, MemberPlanSummary } from '../../models/models';
+import { ItemCategory } from '../../models/enums';
+
 @Component({
   selector: 'app-review-freeze',
   standalone: true,
