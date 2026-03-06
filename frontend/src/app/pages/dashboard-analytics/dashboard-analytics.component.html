@@ -1,0 +1,68 @@
+<div class="analytics-container" [class.loading]="isLoading()">
+
+    <!-- Row 1: Summary Cards -->
+    <div class="summary-cards">
+        <div class="stat-card">
+            <div class="card-icon members-bg">👥</div>
+            <div class="card-info">
+                <span class="card-label">Total Members</span>
+                <h3 class="card-value">{{ overview()?.totalMembersCount ?? 0 }}</h3>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="card-icon tasks-bg">📋</div>
+            <div class="card-info">
+                <span class="card-label">Backlog Tasks</span>
+                <h3 class="card-value">{{ overview()?.totalBacklogTasksCount ?? 0 }}</h3>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="card-icon hours-bg">⏱</div>
+            <div class="card-info">
+                <span class="card-label">Planned Hours</span>
+                <h3 class="card-value">{{ overview()?.totalPlannedHours ?? 0 }}h</h3>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="card-icon done-bg">✅</div>
+            <div class="card-info">
+                <span class="card-label">Completed Tasks</span>
+                <h3 class="card-value">{{ overview()?.completedTasksCount ?? 0 }}</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Row 2: Progress and Member List -->
+    <div class="charts-row">
+        <div class="chart-container large">
+            <div class="chart-header">
+                <h4>Weekly Progress</h4>
+                <span class="text-muted">Completed Hours Trend</span>
+            </div>
+            <div class="chart-body">
+                <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+                </canvas>
+            </div>
+        </div>
+
+        <div class="chart-container small">
+            <div class="chart-header">
+                <h4>Member Progress</h4>
+            </div>
+            <div class="member-list">
+                @for (m of members(); track m.memberId) {
+                <div class="member-progress-item">
+                    <div class="member-info">
+                        <span class="member-name">{{ m.name }}</span>
+                        <span class="member-percent">{{ m.progressPercentage | number:'1.0-0' }}%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" [style.width.%]="m.progressPercentage"></div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

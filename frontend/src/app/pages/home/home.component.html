@@ -1,92 +1,101 @@
 <section id="screen-home-lead">
-    <h2 class="mb-sm">Welcome back, <span class="text-gradient">{{ userName }}</span> 👋</h2>
-    <p class="text-secondary mb-lg">What would you like to do today?</p>
+    @if (statusMessage) {
+    <div class="status-toast">{{ statusMessage }}</div>
+    }
+
+    <div class="welcome-header">
+        <div>
+            <h2 class="dashboard-title">What do you want to do?</h2>
+            <p class="text-secondary">Hi, {{ userName }}! Here's how the team is doing.</p>
+        </div>
+    </div>
+
+    @if (planService.hasActivePlan()) {
+    <app-dashboard-analytics></app-dashboard-analytics>
+    }
 
     <div class="grid-auto">
-        @if (!planService.hasActivePlan()) {
+        <!-- Main Actions -->
+        @if (!planService.isFrozen()) {
         <div class="action-card" (click)="goto('/plan-setup')">
-            <div class="action-icon">🚀</div>
-            <div class="action-content">
-                <h3>Start a New Week</h3>
-                <p>Set up a new planning cycle.</p>
-            </div>
-        </div>
-        }
-        @if (planService.planStatus() === 'Setup') {
-        <div class="action-card" (click)="goto('/plan-setup')">
-            <div class="action-icon">⚙️</div>
+            <div class="action-icon setup-icon">⚙️</div>
             <div class="action-content">
                 <h3>Set Up This Week's Plan</h3>
-                <p>Pick members and set category percentages.</p>
+                <p>Pick members and set budget percentages.</p>
             </div>
         </div>
         }
+
         @if (planService.isPlanning()) {
-        <div class="action-card" (click)="goto('/my-plan')">
-            <div class="action-icon">📝</div>
+        <div class="action-card" (click)="goto('/review-plan')">
+            <div class="action-icon freeze-icon">❄️</div>
             <div class="action-content">
-                <h3>Plan My Work</h3>
-                <p>Pick backlog items and commit hours.</p>
-            </div>
-        </div>
-        <div class="action-card" (click)="goto('/review')">
-            <div class="action-icon">❄️</div>
-            <div class="action-content">
-                <h3>Review &amp; Freeze Plan</h3>
-                <p>Check everyone's hours and lock the plan.</p>
+                <h3>Review and Freeze</h3>
+                <p>Check allocations and lock the plan.</p>
             </div>
         </div>
         }
+
         @if (planService.isFrozen()) {
         <div class="action-card" (click)="goto('/update-progress')">
-            <div class="action-icon">✏️</div>
+            <div class="action-icon update-icon">✏️</div>
             <div class="action-content">
                 <h3>Update My Progress</h3>
-                <p>Report hours and status on your tasks.</p>
-            </div>
-        </div>
-        <div class="action-card" (click)="goto('/progress')">
-            <div class="action-icon">📊</div>
-            <div class="action-content">
-                <h3>See Team Progress</h3>
-                <p>Check how the team is doing.</p>
-            </div>
-        </div>
-        <div class="action-card">
-            <div class="action-icon">✅</div>
-            <div class="action-content">
-                <h3>Finish This Week</h3>
-                <p>Close out this cycle.</p>
+                <p>Report status on your active tasks.</p>
             </div>
         </div>
         }
+
+        <div class="action-card" (click)="goto('/team-progress')">
+            <div class="action-icon progress-icon">📊</div>
+            <div class="action-content">
+                <h3>Team Progress</h3>
+                <p>Monitor real-time execution health.</p>
+            </div>
+        </div>
+
         <div class="action-card" (click)="goto('/backlog')">
-            <div class="action-icon">📋</div>
+            <div class="action-icon backlog-icon">📋</div>
             <div class="action-content">
                 <h3>Manage Backlog</h3>
-                <p>Add, edit, or browse work items.</p>
+                <p>Manage all upcoming work items.</p>
             </div>
         </div>
-        <div class="action-card" (click)="goto('/welcome')">
-            <div class="action-icon">👥</div>
+
+        <!-- Utility Actions -->
+        <div class="action-card" (click)="goto('/team-management')">
+            <div class="action-icon team-icon">👥</div>
             <div class="action-content">
-                <h3>Manage Team Members</h3>
-                <p>Add or remove team members.</p>
+                <h3>Manage Team</h3>
+                <p>Update membership and roles.</p>
             </div>
         </div>
+
         <div class="action-card" (click)="goto('/past-weeks')">
-            <div class="action-icon">📅</div>
+            <div class="action-icon history-icon">📅</div>
             <div class="action-content">
-                <h3>View Past Weeks</h3>
-                <p>Look at completed planning cycles.</p>
+                <h3>Past Weeks</h3>
+                <p>View historical planning cycles.</p>
             </div>
         </div>
+
+        <!-- Danger Zones -->
         @if (planService.hasActivePlan()) {
-        <div class="action-card" style="border-color: rgba(239,68,68,0.2);">
-            <div class="action-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">🗑️</div>
+        <div class="action-card action-card-danger" (click)="cancelPlan()">
+            <div class="action-icon cancel-icon">🗑️</div>
             <div class="action-content">
-                <h3>Cancel This Week</h3>
-                <p>Erase all plans and start over.</p>
+                <h3>Cancel Plan</h3>
+                <p>Erase this week and start over.</p>
+            </div>
+        </div>
+        }
+
+        @if (planService.isFrozen()) {
+        <div class="action-card action-card-success" (click)="completePlan()">
+            <div class="action-icon complete-icon">✅</div>
+            <div class="action-content">
+                <h3>Finish Week</h3>
+                <p>Archive and close this cycle.</p>
             </div>
         </div>
         }

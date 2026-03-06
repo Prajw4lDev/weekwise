@@ -4,7 +4,7 @@
  */
 
 /** Role of a team member. */
-export type MemberRole = 'Lead' | 'Member';
+export type MemberRole = 'Admin' | 'Member';
 
 /** Backlog item category — maps to team budget allocation. */
 export type ItemCategory = 'Client' | 'TechDebt' | 'RnD';

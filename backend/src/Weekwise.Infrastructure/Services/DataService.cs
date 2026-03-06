@@ -144,11 +144,53 @@ public class DataService : IDataService
         await ResetAllAsync();
 
         // ── Team Members ──
-        var lead = new TeamMember { Id = Guid.NewGuid(), Name = "Alice Johnson", Role = MemberRole.Lead, IsActive = true };
-        var dev1 = new TeamMember { Id = Guid.NewGuid(), Name = "Bob Smith", Role = MemberRole.Member, IsActive = true };
-        var dev2 = new TeamMember { Id = Guid.NewGuid(), Name = "Carol Davis", Role = MemberRole.Member, IsActive = true };
+        var lead = new TeamMember 
+        { 
+            Id = Guid.NewGuid(), 
+            Name = "Prajwal Dinde", 
+            Email = "prajwal@demo.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+            Role = "Admin", 
+            IsActive = true 
+        };
+        var dev1 = new TeamMember 
+        { 
+            Id = Guid.NewGuid(), 
+            Name = "Ajay more", 
+            Email = "ajay@demo.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("ajay123"),
+            Role = "Member", 
+            IsActive = true 
+        };
+        var dev2 = new TeamMember 
+        { 
+            Id = Guid.NewGuid(), 
+            Name = "Om Patil", 
+            Email = "om@demo.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("om123"),
+            Role = "Member", 
+            IsActive = true 
+        };
+        var dev3 = new TeamMember 
+        { 
+            Id = Guid.NewGuid(), 
+            Name = "Yash Gaikwad", 
+            Email = "yash@demo.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("yash123"),
+            Role = "Member", 
+            IsActive = true 
+        };
+        var dev4 = new TeamMember 
+        { 
+            Id = Guid.NewGuid(), 
+            Name = "Jay Sharma", 
+            Email = "jay@demo.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("jay123"),
+            Role = "Member", 
+            IsActive = true 
+        };
 
-        await _db.TeamMembers.AddRangeAsync(lead, dev1, dev2);
+        await _db.TeamMembers.AddRangeAsync(lead, dev1, dev2, dev3, dev4);
 
         // ── Backlog Items ──
         var task1 = new BacklogItem { Id = Guid.NewGuid(), Title = "User Auth Module", Description = "Implement JWT authentication", Category = ItemCategory.Client, EstimatedHours = 12 };
@@ -169,7 +211,7 @@ public class DataService : IDataService
             ClientPercent = 60,
             TechDebtPercent = 25,
             RndPercent = 15,
-            TotalHours = 90 // 3 members × 30h
+            TotalHours = 150 // 5 members × 30h
         };
 
         await _db.WeeklyPlans.AddAsync(plan);
@@ -178,7 +220,9 @@ public class DataService : IDataService
         await _db.PlanMembers.AddRangeAsync(
             new PlanMember { Id = Guid.NewGuid(), WeeklyPlanId = plan.Id, MemberId = lead.Id },
             new PlanMember { Id = Guid.NewGuid(), WeeklyPlanId = plan.Id, MemberId = dev1.Id },
-            new PlanMember { Id = Guid.NewGuid(), WeeklyPlanId = plan.Id, MemberId = dev2.Id }
+            new PlanMember { Id = Guid.NewGuid(), WeeklyPlanId = plan.Id, MemberId = dev2.Id },
+            new PlanMember { Id = Guid.NewGuid(), WeeklyPlanId = plan.Id, MemberId = dev3.Id },
+            new PlanMember { Id = Guid.NewGuid(), WeeklyPlanId = plan.Id, MemberId = dev4.Id }
         );
 
         // ── Work Commitments ──

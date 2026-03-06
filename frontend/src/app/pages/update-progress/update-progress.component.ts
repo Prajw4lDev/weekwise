@@ -58,10 +58,16 @@ export class UpdateProgressComponent implements OnInit {
     }
 
     /** Save all latest progress updates to the local service. */
-    saveAll(): void {
-        for (const c of this.memberCommitments()) {
-            this.progressService.updateProgress(c.id, c.hoursDone, c.status, c.notes);
+    async saveAll(): Promise<void> {
+        try {
+            const updates = this.memberCommitments().map(c =>
+                this.progressService.updateProgress(c.id, c.hoursDone, c.status, c.notes)
+            );
+            await Promise.all(updates);
+            alert('All progress saved successfully!');
+        } catch (error) {
+            console.error('Failed to save progress', error);
+            alert('Error saving progress. Please try again.');
         }
-        alert('All progress saved successfully!');
     }
 }

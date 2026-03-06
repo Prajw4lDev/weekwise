@@ -1,27 +1,73 @@
 <section id="screen-home-member">
-    <h2 class="mb-sm">Welcome back, <span class="text-gradient">{{ userName }}</span> 👋</h2>
-    <p class="text-secondary mb-lg">Here's what you can do.</p>
+    <div class="welcome-header">
+        <div>
+            <h2 class="dashboard-title">What do you want to do?</h2>
+            <p class="text-secondary">Hi, {{ userName }}! Great to see you back.</p>
+        </div>
+    </div>
+
+    @if (planService.hasActivePlan() && memberStats()) {
+    <div class="insights-section">
+        <div class="insight-card main-stats">
+            <h4>My Week at a Glance</h4>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">{{ memberStats()?.progressPercentage | number:'1.0-0' }}%</span>
+                    <span class="stat-label">Progress</span>
+                    <div class="stat-progress-bg">
+                        <div class="stat-progress-fill" [style.width.%]="memberStats()?.progressPercentage"></div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ memberStats()?.totalCompletedHours | number:'1.0-1' }}h</span>
+                    <span class="stat-label">Logged / {{ memberStats()?.totalCommittedHours }}h</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
 
     <div class="grid-auto">
+        @if (planService.isPlanning()) {
         <div class="action-card" (click)="goto('/my-plan')">
-            <div class="action-icon">📝</div>
+            <div class="action-icon my-plan-icon">📝</div>
             <div class="action-content">
                 <h3>Plan My Work</h3>
-                <p>Pick backlog items and commit your 30 hours.</p>
+                <p>Add your commitments for this week.</p>
             </div>
         </div>
+        }
+        @if (planService.isFrozen()) {
         <div class="action-card" (click)="goto('/update-progress')">
-            <div class="action-icon">✏️</div>
+            <div class="action-icon update-icon">✏️</div>
             <div class="action-content">
                 <h3>Update My Progress</h3>
-                <p>Report hours and status on your tasks.</p>
+                <p>Report status on your active tasks.</p>
             </div>
         </div>
-        <div class="action-card" (click)="goto('/progress')">
-            <div class="action-icon">📊</div>
+        }
+
+        <div class="action-card" (click)="goto('/team-progress')">
+            <div class="action-icon progress-icon">📊</div>
             <div class="action-content">
-                <h3>See Team Progress</h3>
-                <p>See how the team is doing overall.</p>
+                <h3>Team Progress</h3>
+                <p>See how the whole team is doing.</p>
+            </div>
+        </div>
+
+        <div class="action-card" (click)="goto('/backlog')">
+            <div class="action-icon backlog-icon">📋</div>
+            <div class="action-content">
+                <h3>Browse Backlog</h3>
+                <p>Explore upcoming work items.</p>
+            </div>
+        </div>
+
+        <div class="action-card" (click)="goto('/past-weeks')">
+            <div class="action-icon history-icon">📅</div>
+            <div class="action-content">
+                <h3>Past Weeks</h3>
+                <p>View your history and contributions.</p>
             </div>
         </div>
     </div>

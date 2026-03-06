@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
-import { ThemeService } from './services';
+import { ThemeService, DataService } from './services';
 
 /**
  * Root application component for Weekwise.
@@ -16,6 +16,7 @@ import { ThemeService } from './services';
 export class App implements OnInit {
   title = 'Weekwise';
   private themeService = inject(ThemeService);
+  private dataService = inject(DataService);
 
   ngOnInit(): void {
     this.themeService.init();

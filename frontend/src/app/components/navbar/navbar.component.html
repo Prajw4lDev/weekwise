@@ -4,20 +4,29 @@
         <span class="text-gradient">Weekwise</span>
     </div>
     <div class="navbar-actions">
-        @if (userContext.isLoggedIn()) {
-        <div class="navbar-user" (click)="switchUser()" style="cursor:pointer;" title="Switch user">
-            <div class="avatar"
-                style="background: linear-gradient(135deg, #6366f1, #8b5cf6); width:28px; height:28px; font-size:0.75rem;">
-                {{ getInitial() }}</div>
-            <span>{{ userContext.currentUser()?.name }}</span>
-            @if (userContext.isLead()) {
-            <span class="badge badge-client" style="font-size:0.55rem; padding:2px 6px;">LEAD</span>
+        @if (authService.isLoggedIn()) {
+        <div class="navbar-user-info">
+            <span class="user-name">{{ getUserName() }}</span>
+            @if (authService.getRole() === 'Admin') {
+            <span class="role-badge role-badge-lead">Lead</span>
+            } @else {
+            <span class="role-badge role-badge-member">Member</span>
             }
         </div>
         }
-        <button class="btn btn-icon btn-ghost" title="Toggle Theme" (click)="toggleTheme()">
-            @if (themeService.isDark()) { 🌙 } @else { ☀️ }
+        <button class="nav-item" title="Toggle Theme" (click)="toggleTheme()">
+            <span class="nav-icon">@if (themeService.isDark()) { ☀️ } @else { 🌙 }</span>
+            <span class="nav-label">Theme</span>
         </button>
-        <button class="btn btn-icon btn-ghost" title="Home" (click)="goHome()">🏠</button>
+        @if (authService.isLoggedIn()) {
+        <button class="nav-item" title="Home" (click)="goHome()">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Home</span>
+        </button>
+        <button class="nav-item nav-item-danger" title="Sign Out" (click)="$event.stopPropagation(); logout()">
+            <span class="nav-icon">🚪</span>
+            <span class="nav-label">Sign Out</span>
+        </button>
+        }
     </div>
 </nav>

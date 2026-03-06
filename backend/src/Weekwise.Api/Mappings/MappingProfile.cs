@@ -4,6 +4,7 @@ using Weekwise.Core.DTOs.BacklogItem;
 using Weekwise.Core.DTOs.WeeklyPlan;
 using Weekwise.Core.DTOs.WorkCommitment;
 using Weekwise.Core.DTOs.Progress;
+using Weekwise.Core.DTOs.Invitation;
 using Weekwise.Core.Entities;
 
 namespace Weekwise.Api.Mappings;
@@ -38,5 +39,9 @@ public class MappingProfile : Profile
         // ─── ProgressUpdate ───
         CreateMap<Core.Entities.ProgressUpdate, ProgressUpdateDto>();
         CreateMap<UpdateProgressDto, Core.Entities.ProgressUpdate>();
+
+        // ─── Invitation ───
+        CreateMap<Invitation, InvitationDto>()
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
     }
 }

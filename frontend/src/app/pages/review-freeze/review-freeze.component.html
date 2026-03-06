@@ -1,111 +1,87 @@
-<section id="screen-review-freeze">
-    <h2 class="mb-lg"><span class="icon">❄️</span> Review the Team's Plan</h2>
-
-    <h3 class="mb-md">Category Summary</h3>
-    <div class="glass-card no-hover mb-lg">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Budget</th>
-                    <th>Claimed</th>
-                    <th>Progress</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><span class="badge badge-client">🟢 Client</span></td>
-                    <td>45h</td>
-                    <td>40h</td>
-                    <td>
-                        <div class="flex items-center gap-sm">
-                            <div class="progress-bar-container" style="width:120px;">
-                                <div class="progress-bar-fill green" style="width:89%;"></div>
-                            </div><span class="text-secondary" style="font-size:0.8rem;">89%</span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-techdebt">🟡 Tech Debt</span></td>
-                    <td>27h</td>
-                    <td>27h</td>
-                    <td>
-                        <div class="flex items-center gap-sm">
-                            <div class="progress-bar-container" style="width:120px;">
-                                <div class="progress-bar-fill green" style="width:100%;"></div>
-                            </div><span class="text-secondary" style="font-size:0.8rem;">100%</span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-rnd">🔵 R&amp;D</span></td>
-                    <td>18h</td>
-                    <td>14h</td>
-                    <td>
-                        <div class="flex items-center gap-sm">
-                            <div class="progress-bar-container" style="width:120px;">
-                                <div class="progress-bar-fill amber" style="width:78%;"></div>
-                            </div><span class="text-secondary" style="font-size:0.8rem;">78%</span>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<section id="screen-review-freeze" class="animate-fade-up">
+    <div class="page-header">
+        <h2><span class="icon">❄️</span> Review and Freeze the Plan</h2>
+        <p class="text-secondary">Finalize the team's work allocation for the week.</p>
     </div>
 
-    <h3 class="mb-md">Member Summary</h3>
+    <!-- Weekly Allocations Table -->
+    <h3 class="section-title mb-md">Weekly Allocations</h3>
     <div class="glass-card no-hover mb-lg">
         <table class="data-table">
             <thead>
                 <tr>
                     <th>Member</th>
-                    <th>Committed</th>
-                    <th>Status</th>
+                    <th>Category</th>
+                    <th>Percentage</th>
+                    <th>Hours</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr *ngFor="let alloc of memberAllocations">
                     <td>
                         <div class="flex items-center gap-sm">
                             <div class="avatar"
-                                style="background:linear-gradient(135deg,#6366f1,#8b5cf6);width:28px;height:28px;font-size:0.7rem;">
-                                A</div>Alice
+                                style="width:24px;height:24px;font-size:0.6rem;background: var(--bg-tertiary);">
+                                {{ alloc.memberName.charAt(0).toUpperCase() }}
+                            </div>
+                            {{ alloc.memberName }}
                         </div>
                     </td>
-                    <td>30h / 30h</td>
-                    <td><span class="validation-msg success"
-                            style="display:inline-flex;padding:4px 10px;font-size:0.8rem;">✅ Fully Planned</span></td>
-                </tr>
-                <tr>
+                    <td>
+                        <span class="badge" [ngClass]="{
+                            'badge-client': alloc.category === 'Client',
+                            'badge-techdebt': alloc.category === 'TechDebt',
+                            'badge-rnd': alloc.category === 'RnD'
+                        }">
+                            {{ alloc.category === 'Client' ? '🟢 Client' : alloc.category === 'TechDebt' ? '🟡 Tech
+                            Debt' : '🔵 R&D' }}
+                        </span>
+                    </td>
                     <td>
                         <div class="flex items-center gap-sm">
-                            <div class="avatar"
-                                style="background:linear-gradient(135deg,#3b82f6,#06b6d4);width:28px;height:28px;font-size:0.7rem;">
-                                B</div>Bob
+                            <div class="progress-bar-container" style="width:60px;">
+                                <div class="progress-bar-fill" [style.width.%]="alloc.percentage"></div>
+                            </div>
+                            <span class="text-secondary" style="font-size:0.8rem;">{{ alloc.percentage }}%</span>
                         </div>
                     </td>
-                    <td>30h / 30h</td>
-                    <td><span class="validation-msg success"
-                            style="display:inline-flex;padding:4px 10px;font-size:0.8rem;">✅ Fully Planned</span></td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="flex items-center gap-sm">
-                            <div class="avatar"
-                                style="background:linear-gradient(135deg,#f59e0b,#ef4444);width:28px;height:28px;font-size:0.7rem;">
-                                C</div>Charlie
-                        </div>
-                    </td>
-                    <td>21h / 30h</td>
-                    <td><span class="validation-msg warning"
-                            style="display:inline-flex;padding:4px 10px;font-size:0.8rem;">⚠️ Under-planned (9h
-                            left)</span></td>
+                    <td><strong>{{ alloc.hours }}h</strong></td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <div class="validation-msg warning mb-md">⚠️ Can't freeze yet: Charlie has only committed 21 of 30 hours.</div>
-    <button class="btn btn-primary" style="opacity:0.5;cursor:not-allowed;padding:14px 32px;font-size:1rem;">❄️ Freeze
-        Plan</button>
+    <!-- Member Totals Summary -->
+    <h3 class="section-title mb-md">Total Hours per Member</h3>
+    <div class="grid-3 mb-lg">
+        <div class="glass-card no-hover p-md" *ngFor="let s of memberSummaries">
+            <div class="flex justify-between items-center mb-sm">
+                <span class="font-bold">{{ s.member.name }}</span>
+                <span class="badge" [ngClass]="s.isFullyPlanned ? 'badge-success' : 'badge-warning'">
+                    {{ s.committedHours }}h / {{ s.maxHours }}h
+                </span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" [style.width.%]="(s.committedHours / s.maxHours) * 100"
+                    [ngClass]="s.isFullyPlanned ? 'green' : 'yellow'"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validation and Freeze Button -->
+    <div *ngIf="!planService.canFreeze()" class="validation-msg warning mb-md animate-scale-in">
+        <div *ngFor="let issue of planService.getFreezeValidationIssues()">⚠️ {{ issue }}</div>
+    </div>
+
+    <div class="flex items-center gap-md">
+        <button (click)="freezePlan()" class="btn btn-primary" [disabled]="!planService.canFreeze()"
+            [style.opacity]="planService.canFreeze() ? 1 : 0.5"
+            [style.cursor]="planService.canFreeze() ? 'pointer' : 'not-allowed'"
+            style="padding:14px 32px;font-size:1rem;">
+            ❄️ Freeze Plan
+        </button>
+        <span class="text-secondary" *ngIf="!planService.canFreeze()">
+            Plan cannot be frozen until all members are fully planned.
+        </span>
+    </div>
 </section>

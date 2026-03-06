@@ -16,7 +16,7 @@ export class UserContextService {
     readonly currentUser = this._currentUser.asReadonly();
 
     /** Computed: is the current user a Lead? */
-    readonly isLead = computed(() => this._currentUser()?.role === 'Lead');
+    readonly isLead = computed(() => this._currentUser()?.role === 'Admin');
 
     /** Computed: is any user logged in? */
     readonly isLoggedIn = computed(() => this._currentUser() !== null);

@@ -1,37 +1,33 @@
 <section id="screen-past-weeks">
-    <h2 class="mb-lg"><span class="icon">📅</span> Past Weeks</h2>
+    <div class="flex justify-between items-center mb-lg">
+        <h2><span class="icon">📅</span> Past Weeks</h2>
+        <div class="flex gap-md">
+            <button (click)="exportData()" class="btn btn-secondary btn-sm" title="Download backup as JSON">
+                <span class="icon">📤</span> Export Data
+            </button>
+            <label class="btn btn-secondary btn-sm" style="cursor:pointer;">
+                <span class="icon">📥</span> Import Data
+                <input type="file" (change)="onFileSelected($event)" style="display:none;" accept=".json">
+            </label>
+        </div>
+    </div>
+
+    <div *ngIf="pastWeeks().length === 0" class="glass-card text-center py-xl">
+        <p class="text-secondary mb-md">No completed weeks yet.</p>
+        <p style="font-size:0.9rem;">Once you complete a weekly plan, it will appear here.</p>
+    </div>
 
     <div class="flex flex-col gap-md mb-lg">
-        <div class="glass-card" style="cursor:pointer;">
+        <div *ngFor="let week of pastWeeks()" class="glass-card">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3>Week of Feb 24, 2026</h3>
-                    <span class="text-secondary">3 members · 90h planned</span>
+                    <h3>Week of {{ week.weeklyPlan.weekStartDate | date }}</h3>
+                    <span class="text-secondary">
+                        {{ week.weeklyPlan.selectedMemberIds.length }} members · {{ week.weeklyPlan.totalHours }}h
+                        planned
+                    </span>
                 </div>
                 <div class="flex items-center gap-md">
-                    <div class="flex items-center gap-sm">
-                        <div class="progress-bar-container" style="width:80px;">
-                            <div class="progress-bar-fill green" style="width:92%;"></div>
-                        </div>
-                        <span style="font-weight:600;">92%</span>
-                    </div>
-                    <span class="status-badge status-done">✅ Completed</span>
-                </div>
-            </div>
-        </div>
-        <div class="glass-card" style="cursor:pointer;">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3>Week of Feb 17, 2026</h3>
-                    <span class="text-secondary">2 members · 60h planned</span>
-                </div>
-                <div class="flex items-center gap-md">
-                    <div class="flex items-center gap-sm">
-                        <div class="progress-bar-container" style="width:80px;">
-                            <div class="progress-bar-fill green" style="width:100%;"></div>
-                        </div>
-                        <span style="font-weight:600;">100%</span>
-                    </div>
                     <span class="status-badge status-done">✅ Completed</span>
                 </div>
             </div>
@@ -41,9 +37,14 @@
     <div class="divider"></div>
 
     <div class="glass-card no-hover" style="text-align:center;">
-        <h3 class="mb-sm">Load Data from a Backup File</h3>
-        <p class="text-secondary mb-md">Pick the backup file you saved before. This will replace all your current data.
-        </p>
-        <button class="btn btn-secondary">📁 Choose File</button>
+        <h3 class="mb-sm">Backup and Restore</h3>
+        <p class="text-secondary mb-md">Manage your data locally by exporting or importing JSON backups.</p>
+        <div class="flex justify-center gap-md">
+            <button (click)="exportData()" class="btn btn-secondary">📤 Export Backup</button>
+            <label class="btn btn-secondary" style="cursor:pointer;">
+                📥 Import Backup
+                <input type="file" (change)="onFileSelected($event)" style="display:none;" accept=".json">
+            </label>
+        </div>
     </div>
 </section>

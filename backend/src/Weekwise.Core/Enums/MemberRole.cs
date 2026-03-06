@@ -9,5 +9,5 @@ public enum MemberRole
     Member = 0,
 
     /// <summary>The team lead who creates plans, freezes, and completes weeks.</summary>
-    Lead = 1
+    Admin = 1
 }

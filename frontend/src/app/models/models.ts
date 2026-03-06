@@ -8,8 +8,10 @@ import { MemberRole, ItemCategory, PlanStatus, TaskStatus } from './enums';
 export interface TeamMember {
     id: string;
     name: string;
+    email: string;
     role: MemberRole;
     isActive: boolean;
+    weeklyCapacityHours: number;
 }
 
 /** A backlog work item that can be picked up during planning. */
@@ -109,4 +111,38 @@ export interface MemberProgressSummary {
     tasksDone: number;
     totalTasks: number;
     blockedTasks: number;
+}
+
+/**
+ * Dashboard Statistics DTOs
+ */
+export interface DashboardOverview {
+    overallProgressPercentage: number;
+    totalTasksCount: number;
+    completedTasksCount: number;
+    blockedTasksCount: number;
+    totalMembersCount: number;
+    totalBacklogTasksCount: number;
+    totalPlannedHours: number;
+}
+
+export interface DashboardCategory {
+    category: ItemCategory;
+    budgetHours: number;
+    committedHours: number;
+    completedHours: number;
+    progressPercentage: number;
+}
+
+export interface DashboardMember {
+    memberId: string;
+    name: string;
+    totalCommittedHours: number;
+    totalCompletedHours: number;
+    progressPercentage: number;
+}
+
+export interface DashboardTrend {
+    label: string;
+    completedHours: number;
 }

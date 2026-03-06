@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Weekwise.Core.DTOs.Progress;
 using Weekwise.Core.Interfaces;
@@ -6,6 +7,7 @@ namespace Weekwise.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ProgressController : ControllerBase
 {
     private readonly IProgressService _service;

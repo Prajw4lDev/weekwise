@@ -9,15 +9,21 @@ public class DashboardService : IDashboardService
     private readonly IWeeklyPlanRepository _planRepo;
     private readonly IWorkCommitmentRepository _commitmentRepo;
     private readonly IProgressUpdateRepository _progressRepo;
+    private readonly ITeamMemberRepository _memberRepo;
+    private readonly IBacklogItemRepository _backlogRepo;
 
     public DashboardService(
         IWeeklyPlanRepository planRepo,
         IWorkCommitmentRepository commitmentRepo,
-        IProgressUpdateRepository progressRepo)
+        IProgressUpdateRepository progressRepo,
+        ITeamMemberRepository memberRepo,
+        IBacklogItemRepository backlogRepo)
     {
         _planRepo = planRepo;
         _commitmentRepo = commitmentRepo;
         _progressRepo = progressRepo;
+        _memberRepo = memberRepo;
+        _backlogRepo = backlogRepo;
     }
 
     public async Task<DashboardOverviewDto> GetOverviewAsync()
@@ -50,12 +56,18 @@ public class DashboardService : IDashboardService
             }
         }
 
+        var totalMembers = await _memberRepo.GetAllAsync();
+        var backlogTasks = await _backlogRepo.GetAllAsync();
+
         return new DashboardOverviewDto
         {
             OverallProgressPercentage = totalCommittedHours > 0 ? (totalCompletedHours / totalCommittedHours) * 100 : 0,
             TotalTasksCount = totalTasks,
             CompletedTasksCount = completedTasks,
-            BlockedTasksCount = blockedTasks
+            BlockedTasksCount = blockedTasks,
+            TotalMembersCount = totalMembers.Count(),
+            TotalBacklogTasksCount = backlogTasks.Count(),
+            TotalPlannedHours = plan.TotalHours
         };
     }
 
@@ -131,6 +143,44 @@ public class DashboardService : IDashboardService
                 Name = pm.Member?.Name ?? "Unknown",
                 TotalCommittedHours = committedHours,
                 TotalCompletedHours = completedHours
+            });
+        }
+
+        return result;
+    }
+
+    public async Task<IEnumerable<DashboardTrendDto>> GetWeeklyTrendAsync()
+    {
+        var plan = await _planRepo.GetActivePlanAsync()
+            ?? throw new InvalidOperationException("No active plan found.");
+
+        var commitments = await _commitmentRepo.GetByPlanAsync(plan.Id);
+        var commitmentIds = commitments.Select(c => c.Id).ToList();
+
+        // Get all progress updates for these commitments
+        var allUpdates = new List<Weekwise.Core.Entities.ProgressUpdate>();
+        foreach (var id in commitmentIds)
+        {
+            var updates = await _progressRepo.GetByCommitmentAsync(id);
+            allUpdates.AddRange(updates);
+        }
+
+        // Group by day of week (Monday to Friday)
+        var days = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
+        var result = new List<DashboardTrendDto>();
+
+        foreach (var day in days)
+        {
+            // For simplicity, we assume the updates happened this week.
+            // In a real app, we'd filter by date range within the planned week.
+            var completedForDay = allUpdates
+                .Where(u => u.UpdatedAt.DayOfWeek == day)
+                .Sum(u => u.HoursCompleted);
+
+            result.Add(new DashboardTrendDto
+            {
+                Label = day.ToString().Substring(0, 3), // e.g., "Mon"
+                CompletedHours = completedForDay
             });
         }
 

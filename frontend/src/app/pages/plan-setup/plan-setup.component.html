@@ -11,7 +11,7 @@
                 <label class="checkbox-label">
                     <input type="checkbox" [checked]="isMemberSelected(member.id)" (change)="toggleMember(member.id)">
                     {{ member.name }}
-                    @if (member.role === 'Lead') { (Lead) }
+                    @if (member.role === 'Admin') { (Lead) }
                 </label>
                 }
             </div>

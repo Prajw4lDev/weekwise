@@ -1,1 +1,63 @@
-/* Home Member component styles */
+/* Member Home Dashboard styles */
+
+.dashboard-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+/* Week Status Card */
+.week-status-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem 1.75rem;
+    margin-top: 1.5rem;
+    background: var(--card-bg, rgba(30, 41, 59, 0.7));
+    border: 1px solid var(--border-color, rgba(148, 163, 184, 0.1));
+    border-radius: 12px;
+    flex-wrap: wrap;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.status-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.status-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.status-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted, #64748b);
+}
+
+.status-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary, #f1f5f9);
+}
+
+.status-value.status-active {
+    color: #f59e0b;
+}
+
+.status-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--border-color, rgba(148, 163, 184, 0.15));
+    flex-shrink: 0;
+}
