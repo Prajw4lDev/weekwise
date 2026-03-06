@@ -107,12 +107,15 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Weekwise API v1");
 });
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapFallbackToFile("index.html");
 
 app.MapGet("/", () => Results.Ok(new { status = "Weekwise API running" }));
 
