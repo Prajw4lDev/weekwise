@@ -4,6 +4,7 @@
         <button class="btn btn-ghost" (click)="goBack()">← Back to Dashboard</button>
     </div>
 
+<<<<<<< feature/frontend-backend-integration
     @if (loading) {
     <div class="loading-state">
         <div class="spinner"></div>
@@ -68,9 +69,43 @@
             <div class="progress-bar-container mt-sm">
                 <div class="progress-bar-fill" [class]="getProgressBarClass(cat.progressPercentage)"
                     [style.width.%]="Math.min(cat.progressPercentage, 100)"></div>
+=======
+    <!-- Overall Stats -->
+    <div class="grid-3 mb-lg">
+        <div class="stat-card">
+            <div class="stat-value text-gradient">{{ overallProgress }}%</div>
+            <div class="stat-label">Overall Progress</div>
+            <div class="progress-bar-container mt-sm">
+                <div class="progress-bar-fill" [class]="getProgressColor(overallProgress)"
+                    [style.width.%]="overallProgress"></div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color:var(--status-done);">{{ totalTasksDone }} / {{ totalTasks }}</div>
+            <div class="stat-label">Tasks Done</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color:var(--status-blocked);">{{ totalBlocked }}</div>
+            <div class="stat-label">Blocked</div>
+        </div>
+    </div>
+
+    <!-- By Category -->
+    <h3 class="mb-md">By Category</h3>
+    <div class="grid-3 mb-lg">
+        @let clientProg = getCategoryProgress('Client');
+        <div class="glass-card no-hover" style="border-left:3px solid var(--cat-client);">
+            <span class="badge badge-client mb-sm">🟢 Client</span>
+            <div style="font-size:1.5rem; font-weight:800;">{{ clientProg.done }}h <span class="text-secondary"
+                    style="font-size:0.9rem; font-weight:400;">/ {{ clientProg.budgetHours }}h</span></div>
+            <div class="progress-bar-container mt-sm">
+                <div class="progress-bar-fill" [class]="getProgressColor(clientProg.percent)"
+                    [style.width.%]="clientProg.percent"></div>
+>>>>>>> main
             </div>
             <div class="category-pct">{{ Math.round(cat.progressPercentage) }}%</div>
         </div>
+<<<<<<< feature/frontend-backend-integration
     </div>
 
     <!-- Work Distribution Chart (Simple) -->
@@ -94,12 +129,42 @@
                     {{ getCategoryLabel(cat.category) }}: {{ totalHours > 0 ? Math.round((cat.budgetHours / totalHours)
                     * 100) : 0 }}%
                 </span>
+=======
+        @let techProg = getCategoryProgress('TechDebt');
+        <div class="glass-card no-hover" style="border-left:3px solid var(--cat-techdebt);">
+            <span class="badge badge-techdebt mb-sm">🟡 Tech Debt</span>
+            <div style="font-size:1.5rem; font-weight:800;">{{ techProg.done }}h <span class="text-secondary"
+                    style="font-size:0.9rem; font-weight:400;">/ {{ techProg.budgetHours }}h</span></div>
+            <div class="progress-bar-container mt-sm">
+                <div class="progress-bar-fill" [class]="getProgressColor(techProg.percent)"
+                    [style.width.%]="techProg.percent"></div>
+            </div>
+        </div>
+        @let rndProg = getCategoryProgress('RnD');
+        <div class="glass-card no-hover" style="border-left:3px solid var(--cat-rnd);">
+            <span class="badge badge-rnd mb-sm">🔵 R&amp;D</span>
+            <div style="font-size:1.5rem; font-weight:800;">{{ rndProg.done }}h <span class="text-secondary"
+                    style="font-size:0.9rem; font-weight:400;">/ {{ rndProg.budgetHours }}h</span></div>
+            <div class="progress-bar-container mt-sm">
+                <div class="progress-bar-fill" [class]="getProgressColor(rndProg.percent)"
+                    [style.width.%]="rndProg.percent"></div>
+>>>>>>> main
             </div>
         </div>
     </div>
 
+<<<<<<< feature/frontend-backend-integration
     <!-- Member Breakdown -->
     <h3 class="section-title mb-md">By Member</h3>
+=======
+    <!-- By Member -->
+    <h3 class="mb-md">By Member</h3>
+    @if (memberSummaries.length === 0) {
+    <div class="glass-card no-hover" style="text-align:center;">
+        <p class="text-muted">No progress data yet.</p>
+    </div>
+    } @else {
+>>>>>>> main
     <div class="glass-card no-hover">
         <table class="data-table">
             <thead>
@@ -111,6 +176,7 @@
                 </tr>
             </thead>
             <tbody>
+<<<<<<< feature/frontend-backend-integration
                 <tr *ngFor="let m of members; let i = index">
                     <td>
                         <div class="member-cell">
@@ -119,11 +185,22 @@
                                 {{ m.name.charAt(0).toUpperCase() }}
                             </div>
                             <span>{{ m.name }}</span>
+=======
+                @for (summary of memberSummaries; track summary.member.id; let i = $index) {
+                <tr style="cursor:pointer;" (click)="viewDetail()">
+                    <td>
+                        <div class="flex items-center gap-sm">
+                            <div class="avatar" [style.background]="getGradient(i)"
+                                style="width:28px;height:28px;font-size:0.7rem;">{{ summary.member.name.charAt(0) }}
+                            </div>
+                            {{ summary.member.name }}
+>>>>>>> main
                         </div>
                     </td>
                     <td><strong>{{ Math.round(m.totalCommittedHours) }}h</strong></td>
                     <td>{{ Math.round(m.totalCompletedHours) }}h</td>
                     <td>
+<<<<<<< feature/frontend-backend-integration
                         <div class="progress-cell">
                             <div class="progress-bar-container" style="width:120px;">
                                 <div class="progress-bar-fill" [class]="getProgressBarClass(m.progressPercentage)"
@@ -132,7 +209,27 @@
                             <span class="progress-pct">{{ Math.round(m.progressPercentage) }}%</span>
                         </div>
                     </td>
+=======
+                        <div class="flex items-center gap-sm">
+                            <div class="progress-bar-container" style="width:100px;">
+                                <div class="progress-bar-fill" [class]="getProgressColor(summary.progressPercent)"
+                                    [style.width.%]="summary.progressPercent"></div>
+                            </div>
+                            <span style="font-size:0.85rem;">{{ summary.progressPercent }}%</span>
+                        </div>
+                    </td>
+                    <td>{{ summary.totalDone }}h / {{ summary.totalCommitted }}h</td>
+                    <td>{{ summary.tasksDone }} / {{ summary.totalTasks }}</td>
+                    <td>
+                        @if (summary.blockedTasks > 0) {
+                        <span style="color:var(--status-blocked);font-weight:600;">{{ summary.blockedTasks }}</span>
+                        } @else {
+                        0
+                        }
+                    </td>
+>>>>>>> main
                 </tr>
+                }
             </tbody>
         </table>
 

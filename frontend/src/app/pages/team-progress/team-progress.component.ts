@@ -1,36 +1,12 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { PlanService } from '../../services';
-import { environment } from '../../../environments/environment';
-import { lastValueFrom } from 'rxjs';
+import { PlanService, ProgressService, BacklogService } from '../../services';
+import { MemberProgressSummary, ItemCategory } from '../../models';
 
-interface DashboardOverview {
-    overallProgressPercentage: number;
-    totalTasksCount: number;
-    completedTasksCount: number;
-    blockedTasksCount: number;
-    totalHours?: number; // Optional on frontend
-}
-
-interface DashboardCategory {
-    category: string;
-    budgetHours: number;
-    committedHours: number;
-    completedHours: number;
-    progressPercentage: number;
-}
-
-interface DashboardMember {
-    memberId: string;
-    name: string;
-    totalCommittedHours: number;
-    totalCompletedHours: number;
-    progressPercentage: number;
-}
-
-/** Team progress dashboard — overview of all members and categories. */
+/**
+ * Team Progress Dashboard — overview of all members, categories, and overall progress.
+ */
 @Component({
     selector: 'app-team-progress',
     standalone: true,
@@ -38,99 +14,64 @@ interface DashboardMember {
     templateUrl: './team-progress.component.html',
     styleUrl: './team-progress.component.css'
 })
-export class TeamProgressComponent implements OnInit {
+export class TeamProgressComponent {
+
     private router = inject(Router);
-    private http = inject(HttpClient);
+
     planService = inject(PlanService);
-    protected readonly Math = Math;
+    progressService = inject(ProgressService);
+    backlogService = inject(BacklogService);
 
-    private apiUrl = `${environment.apiUrl}/dashboard`;
-
-    overview: DashboardOverview = {
-        overallProgressPercentage: 0,
-        totalTasksCount: 0,
-        completedTasksCount: 0,
-        blockedTasksCount: 0
-    };
-
-    categories: DashboardCategory[] = [];
-    members: DashboardMember[] = [];
-    loading = true;
-    error = '';
-
-    async ngOnInit(): Promise<void> {
-        if (!this.planService.isFrozen() && !this.planService.isPlanning()) {
-            this.loading = false;
-            this.error = 'No active plan. Create and set up a plan first.';
-            return;
-        }
-        await this.loadData();
+    /** Overall team progress. */
+    get overallProgress(): number {
+        return this.progressService.getOverallProgress();
     }
 
-    async loadData(): Promise<void> {
-        this.loading = true;
-        this.error = '';
-        try {
-            const [overview, categories, members] = await Promise.all([
-                lastValueFrom(this.http.get<DashboardOverview>(`${this.apiUrl}/overview`)),
-                lastValueFrom(this.http.get<DashboardCategory[]>(`${this.apiUrl}/categories`)),
-                lastValueFrom(this.http.get<DashboardMember[]>(`${this.apiUrl}/members`))
-            ]);
-            this.overview = overview;
-            this.categories = categories;
-            this.members = members;
-            this.overview.totalHours = this.totalHours;
-        } catch (e: any) {
-            this.error = e.error?.error || 'Failed to load dashboard data.';
-        } finally {
-            this.loading = false;
-        }
+    get totalTasksDone(): number {
+        return this.progressService.getTotalTasksDone();
     }
 
-    getCategoryLabel(cat: string): string {
-        if (cat === 'Client') return '🟢 Client';
-        if (cat === 'TechDebt') return '🟡 Tech Debt';
-        return '🔵 R&D';
+    get totalTasks(): number {
+        return this.progressService.getTotalTasks();
     }
 
-    getCategoryClass(cat: string): string {
-        if (cat === 'Client') return 'badge-client';
-        if (cat === 'TechDebt') return 'badge-techdebt';
-        return 'badge-rnd';
+    get totalBlocked(): number {
+        return this.progressService.getTotalBlocked();
     }
 
-    getCategoryBorderColor(cat: string): string {
-        if (cat === 'Client') return 'var(--cat-client, #10b981)';
-        if (cat === 'TechDebt') return 'var(--cat-techdebt, #f59e0b)';
-        return 'var(--cat-rnd, #6366f1)';
+    /** All member summaries. */
+    get memberSummaries(): MemberProgressSummary[] {
+        return this.progressService.getAllMemberProgress();
     }
 
-    getCategoryColor(cat: string): string {
-        return this.getCategoryBorderColor(cat);
+    /** Category progress. */
+    getCategoryProgress(category: ItemCategory) {
+        const budget = this.planService.getCategoryBudget(category);
+        const progress = this.progressService.getCategoryProgress(category);
+        return { ...budget, ...progress };
     }
 
-    get totalHours(): number {
-        return this.categories.reduce((sum, c) => sum + c.budgetHours, 0);
+    /** Navigate to task detail. */
+    viewDetail(): void {
+        this.router.navigate(['/task-detail']);
     }
 
-    getProgressBarClass(percent: number): string {
+    /** Progress bar color. */
+    getProgressColor(percent: number): string {
         if (percent >= 80) return 'green';
-        if (percent >= 50) return 'amber';
+        if (percent >= 40) return 'amber';
         return '';
     }
 
-    getAvatarGradient(index: number): string {
+    /** Avatar gradients. */
+    getGradient(index: number): string {
         const gradients = [
             'linear-gradient(135deg, #6366f1, #8b5cf6)',
             'linear-gradient(135deg, #3b82f6, #06b6d4)',
             'linear-gradient(135deg, #f59e0b, #ef4444)',
             'linear-gradient(135deg, #10b981, #059669)',
-            'linear-gradient(135deg, #ec4899, #db2777)',
+            'linear-gradient(135deg, #ec4899, #f43f5e)',
         ];
         return gradients[index % gradients.length];
-    }
-
-    goBack(): void {
-        this.router.navigate(['/home-admin']);
     }
 }
