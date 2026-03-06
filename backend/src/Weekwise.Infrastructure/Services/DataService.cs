@@ -148,8 +148,8 @@ public class DataService : IDataService
         { 
             Id = Guid.NewGuid(), 
             Name = "Prajwal Dinde", 
-            Email = "prajwal@demo.com",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+            Email = "lead@gmail.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("lead"),
             Role = "Admin", 
             IsActive = true 
         };
@@ -157,7 +157,7 @@ public class DataService : IDataService
         { 
             Id = Guid.NewGuid(), 
             Name = "Ajay more", 
-            Email = "ajay@demo.com",
+            Email = "ajay@gmail.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("ajay123"),
             Role = "Member", 
             IsActive = true 
@@ -166,7 +166,7 @@ public class DataService : IDataService
         { 
             Id = Guid.NewGuid(), 
             Name = "Om Patil", 
-            Email = "om@demo.com",
+            Email = "om@gmail.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("om123"),
             Role = "Member", 
             IsActive = true 
@@ -175,7 +175,7 @@ public class DataService : IDataService
         { 
             Id = Guid.NewGuid(), 
             Name = "Yash Gaikwad", 
-            Email = "yash@demo.com",
+            Email = "yash@gmail.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("yash123"),
             Role = "Member", 
             IsActive = true 
@@ -184,7 +184,7 @@ public class DataService : IDataService
         { 
             Id = Guid.NewGuid(), 
             Name = "Jay Sharma", 
-            Email = "jay@demo.com",
+            Email = "jay@gmail.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("jay123"),
             Role = "Member", 
             IsActive = true 

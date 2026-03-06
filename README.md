@@ -1,5 +1,7 @@
 # 🗓️ WeekWise — Premium Weekly Plan Tracker
 
+**Live Site:** [https://weekwise-api-prajwal.azurewebsites.net](https://weekwise-api-prajwal.azurewebsites.net)
+
 Weekwise is a state-of-the-art, high-performance weekly planning and progress tracking application. Designed for elite engineering teams, it balances administrative control with developer commitment, ensuring every hour counts.
 
 ---
@@ -75,8 +77,8 @@ Use these credentials to access the system:
 
 | Role | Username (Email) | Password |
 | :--- | :--- | :--- |
-| **Admin (Prajwal)** | `prajwal@demo.com` | `admin123` |
-| **Member (Ajay)** | `ajay@demo.com` | `ajay123` |
+| **Admin (Prajwal)** | `lead@gmail.com` | `lead` |
+| **Member (Ajay)** | `ajay@gmail.com` | `ajay123` |
 
 ---
 
