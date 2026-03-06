@@ -1,14 +1,9 @@
 <section id="screen-update-progress">
     <h2 class="mb-sm"><span class="icon">✏️</span> Update My Progress</h2>
-<<<<<<< feature/frontend-backend-integration
     <p class="text-secondary mb-lg">
-        Committed: <strong>{{ totalCommitted() }}h</strong>. 
+        Committed: <strong>{{ totalCommitted() }}h</strong>.
         Currently: <strong style="color:var(--status-done);">{{ totalDone() }}h</strong> done.
     </p>
-=======
-    <p class="text-secondary mb-lg">Committed: <strong>{{ totalCommitted }}h</strong>. Currently: <strong
-            style="color:var(--status-done);">{{ totalDone }}h</strong> done.</p>
->>>>>>> main
 
     <!-- Progress Ring -->
     <div class="glass-card no-hover mb-lg" style="text-align:center; padding:var(--space-xl);">
@@ -16,68 +11,44 @@
             <svg width="120" height="120" viewBox="0 0 120 120">
                 <defs>
                     <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#6366f1" />
-                        <stop offset="100%" stop-color="#8b5cf6" />
+                        <stop offset="0%" stop-color="#6366f1"></stop>
+                        <stop offset="100%" stop-color="#8b5cf6"></stop>
                     </linearGradient>
                 </defs>
-                <circle class="progress-ring-bg" cx="60" cy="60" r="52" />
+                <circle class="progress-ring-bg" cx="60" cy="60" r="52"></circle>
                 <circle class="progress-ring-fill" cx="60" cy="60" r="52" stroke-dasharray="326.7"
-<<<<<<< feature/frontend-backend-integration
-                    [attr.stroke-dashoffset]="326.7 - (326.7 * progressPercent() / 100)" />
+                    [attr.stroke-dashoffset]="ringDashoffset()">
+                </circle>
             </svg>
             <div class="progress-ring-text">
                 <span class="ring-value text-gradient">{{ progressPercent() }}%</span>
-=======
-                    [attr.stroke-dashoffset]="ringDashoffset" />
-            </svg>
-            <div class="progress-ring-text">
-                <span class="ring-value text-gradient">{{ progressPercent }}%</span>
->>>>>>> main
                 <span class="ring-label">Done</span>
             </div>
         </div>
     </div>
 
-    @if (myCommitments.length === 0) {
+    @if (memberCommitments().length === 0) {
     <div class="glass-card no-hover" style="text-align:center; padding:var(--space-xl);">
         <p class="text-muted">No tasks to update. Plan your work first.</p>
     </div>
     } @else {
     <div class="flex flex-col gap-md">
-<<<<<<< feature/frontend-backend-integration
-        <div *ngIf="memberCommitments().length === 0" class="glass-card text-center text-secondary">
-            No work commitments found for this week.
-        </div>
-
-        <div *ngFor="let c of memberCommitments(); trackBy: trackById" class="glass-card no-hover">
+        @for (c of memberCommitments(); track c.id) {
+        <div class="glass-card no-hover">
             <div class="flex items-center justify-between mb-md">
                 <div class="flex items-center gap-sm">
-                    <span class="badge" [ngClass]="'badge-' + c.item.category.toLowerCase()">
-                        {{ c.item.category }}
+                    <span class="badge" [ngClass]="getCategoryClass(c.item.category)">
+                        {{ getCategoryLabel(c.item.category) }}
                     </span>
                     <span style="font-weight:600;">{{ c.item.title }}</span>
                 </div>
                 <span class="text-secondary">{{ c.committedHours }}h committed</span>
-=======
-        @for (commitment of myCommitments; track commitment.id) {
-        @let item = getItem(commitment.backlogItemId);
-        @if (item) {
-        <div class="glass-card no-hover">
-            <div class="flex items-center justify-between mb-md">
-                <div class="flex items-center gap-sm">
-                    <span class="badge" [class]="getCategoryClass(item.category)">{{ getCategoryLabel(item.category)
-                        }}</span>
-                    <span style="font-weight:600;">{{ item.title }}</span>
-                </div>
-                <span class="text-secondary">{{ commitment.committedHours }}h committed</span>
->>>>>>> main
             </div>
-            
+
             <div class="grid-3 gap-md">
                 <div class="form-group">
                     <label>Hours Done</label>
-<<<<<<< feature/frontend-backend-integration
-                    <input type="number" class="form-input" [(ngModel)]="c.hoursDone" min="0" 
+                    <input type="number" class="form-input" [(ngModel)]="c.hoursDone" min="0"
                         [style.border-color]="c.hoursDone > c.committedHours ? 'var(--status-blocked)' : ''">
                 </div>
                 <div class="form-group">
@@ -87,56 +58,26 @@
                         <option value="InProgress">In Progress</option>
                         <option value="Done">Done</option>
                         <option value="Blocked">Blocked</option>
-=======
-                    <input type="number" class="form-input" [value]="getHours(commitment.id)"
-                        (input)="updateFormField(commitment.id, 'hours', $any($event.target).valueAsNumber)" min="0"
-                        [style.borderColor]="isOverHours(commitment) ? 'var(--cat-techdebt)' : ''">
-                </div>
-                <div class="form-group">
-                    <label>Status</label>
-                    <select class="form-input" [value]="getStatus(commitment.id)"
-                        (change)="updateFormField(commitment.id, 'status', $any($event.target).value)">
-                        @for (opt of statusOptions; track opt.value) {
-                        <option [value]="opt.value" [selected]="getStatus(commitment.id) === opt.value">{{ opt.label }}
-                        </option>
-                        }
->>>>>>> main
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Notes</label>
-<<<<<<< feature/frontend-backend-integration
                     <input type="text" class="form-input" [(ngModel)]="c.notes" placeholder="Update notes...">
                 </div>
             </div>
 
-            <div *ngIf="c.hoursDone > c.committedHours" class="validation-msg warning mt-sm" style="font-size:0.8rem;">
-                ⚠️ You've put in more hours than planned ({{ c.hoursDone }}h / {{ c.committedHours }}h). This will be noted.
-            </div>
-=======
-                    <input type="text" class="form-input" placeholder="Any notes..." [value]="getNotes(commitment.id)"
-                        (input)="updateFormField(commitment.id, 'notes', $any($event.target).value)">
-                </div>
-            </div>
-            @if (isOverHours(commitment)) {
+            @if (c.hoursDone > c.committedHours) {
             <div class="validation-msg warning mt-sm" style="font-size:0.8rem;">
-                ⚠️ Over-hours: {{ getHours(commitment.id) }}h done / {{ commitment.committedHours }}h planned.
+                ⚠️ You've put in more hours than planned ({{ c.hoursDone }}h / {{ c.committedHours }}h). This will be
+                noted.
             </div>
             }
->>>>>>> main
         </div>
         }
-        }
     </div>
-<<<<<<< feature/frontend-backend-integration
 
-    <button *ngIf="memberCommitments().length > 0" (click)="saveAll()" class="btn btn-primary mt-lg" style="padding:14px 32px; font-size:1rem;">
+    <button (click)="saveAll()" class="btn btn-primary mt-lg" style="padding:14px 32px; font-size:1rem;">
         💾 Save All Progress
     </button>
-</section>
-=======
-    <button class="btn btn-primary mt-lg" style="padding:14px 32px; font-size:1rem;" (click)="saveAll()"
-        id="save-progress-btn">💾 Save All Progress</button>
     }
 </section>
->>>>>>> main

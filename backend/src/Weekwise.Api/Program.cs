@@ -1,3 +1,4 @@
+```csharp
 using Weekwise.Infrastructure.Data;
 using Weekwise.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,9 @@ using Weekwise.Core.Interfaces;
 using Weekwise.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// IMPORTANT: Bind to Azure App Service port
+builder.WebHost.UseUrls("http://0.0.0.0:8080");
 
 // ---------------------------------------------------------------------------
 // Services
@@ -28,6 +32,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Weekwise API", Version = "v1" });
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -36,6 +41,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
+
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -64,11 +70,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+            )
         };
     });
 
-// CORS — allow everything for easier local development/testing
+// CORS — allow everything for development/testing
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -110,7 +118,7 @@ var app = builder.Build();
 // Middleware pipeline
 // ---------------------------------------------------------------------------
 
-// Swagger (available in all environments for now)
+// Swagger
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -120,6 +128,9 @@ app.UseSwaggerUI(c =>
 
 app.UseCors("AllowAll");
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 // app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -127,18 +138,20 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapFallbackToFile("index.html");
+
 // Health check endpoint
 app.MapGet("/", () => Results.Ok(new { status = "Weekwise API is running", version = "1.0.0" }));
 
-// ───────────────────────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------------
 // Initialize Database
-// ───────────────────────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------------
+
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<WeekwiseDbContext>();
     context.Database.EnsureCreated();
 
-    // Force seed demo data
     var dataService = scope.ServiceProvider.GetRequiredService<IDataService>();
     await dataService.SeedDemoDataAsync();
 }
@@ -147,3 +160,4 @@ app.Run();
 
 // Make the Program class accessible for integration tests
 public partial class Program { }
+```

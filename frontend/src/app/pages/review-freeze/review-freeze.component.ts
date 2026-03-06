@@ -1,22 +1,12 @@
 import { Component, inject } from '@angular/core';
-<<<<<<< feature/frontend-backend-integration
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PlanService, TeamService, BacklogService } from '../../services';
-import { ItemCategory } from '../../models';
-
-/**
- * Review and freeze the plan (Lead only).
- * Shows category and member summaries.
-=======
-import { Router } from '@angular/router';
-import { PlanService, BacklogService, TeamService } from '../../services';
-import { CategoryBudget, MemberPlanSummary, ItemCategory } from '../../models';
+import { ItemCategory, CategoryBudget, MemberPlanSummary } from '../../models';
 
 /**
  * Review & Freeze screen (Lead only).
- * Shows category budget summary, member plan summaries, and freeze button.
->>>>>>> main
+ * Shows category distribution, member summaries, and freeze button.
  */
 @Component({
     selector: 'app-review-freeze',
@@ -27,20 +17,30 @@ import { CategoryBudget, MemberPlanSummary, ItemCategory } from '../../models';
 })
 export class ReviewFreezeComponent {
     private router = inject(Router);
-    planService = inject(PlanService);
-<<<<<<< feature/frontend-backend-integration
-    teamService = inject(TeamService);
-    backlogService = inject(BacklogService);
+    private planService = inject(PlanService);
+    private teamService = inject(TeamService);
+    private backlogService = inject(BacklogService);
+
     protected readonly Math = Math;
 
-    /** Category summaries for the current plan. */
-    get categorySummaries() {
+    /** Category budget summaries. */
+    get categoryBudgets(): CategoryBudget[] {
         return this.planService.getAllCategoryBudgets();
     }
 
-    /** Member summaries for the current plan. */
-    get memberSummaries() {
+    /** Member plan summaries. */
+    get memberSummaries(): MemberPlanSummary[] {
         return this.planService.getMemberPlanSummaries();
+    }
+
+    /** Can the plan be frozen? */
+    get canFreeze(): boolean {
+        return this.planService.canFreeze();
+    }
+
+    /** Validation issues preventing freeze. */
+    get freezeIssues(): string[] {
+        return this.planService.getFreezeValidationIssues();
     }
 
     /** Detailed allocations per member and category. */
@@ -71,7 +71,7 @@ export class ReviewFreezeComponent {
         return allocations;
     }
 
-    /** Freeze the plan and return to dashboard. */
+    /** Freeze the plan. */
     async freezePlan(): Promise<void> {
         if (!this.planService.canFreeze()) return;
 
@@ -82,49 +82,19 @@ export class ReviewFreezeComponent {
             alert('Failed to freeze plan. Please check the console for details.');
         }
     }
-=======
-    backlogService = inject(BacklogService);
-    teamService = inject(TeamService);
-
-    /** Category budget summaries. */
-    get categoryBudgets(): CategoryBudget[] {
-        return this.planService.getAllCategoryBudgets();
-    }
-
-    /** Member plan summaries. */
-    get memberSummaries(): MemberPlanSummary[] {
-        return this.planService.getMemberPlanSummaries();
-    }
-
-    /** Can the plan be frozen? */
-    get canFreeze(): boolean {
-        return this.planService.canFreeze();
-    }
-
-    /** Validation issues preventing freeze. */
-    get freezeIssues(): string[] {
-        return this.planService.getFreezeValidationIssues();
-    }
-
-    /** Freeze the plan. */
-    freezePlan(): void {
-        if (this.planService.freezePlan()) {
-            this.router.navigate(['/home']);
-        }
-    }
-
-    /** Get progress percent for a category budget. */
-    getProgressPercent(budget: CategoryBudget): number {
-        return budget.budgetHours > 0
-            ? Math.round((budget.claimedHours / budget.budgetHours) * 100)
-            : 0;
-    }
 
     /** Get progress bar color class. */
     getProgressColor(percent: number): string {
-        if (percent >= 90) return 'green';
-        if (percent >= 50) return 'amber';
-        return '';
+        if (percent >= 100) return 'var(--status-done)';
+        if (percent >= 50) return 'var(--status-inprogress)';
+        return 'var(--status-notstarted)';
+    }
+
+    /** Get progress color (vibrant for gradients). */
+    getProgressVibrantColor(percent: number): string {
+        if (percent >= 90) return '#10b981'; // Green
+        if (percent >= 50) return '#f59e0b'; // Amber
+        return '#ef4444'; // Red
     }
 
     /** Get category label. */
@@ -133,6 +103,7 @@ export class ReviewFreezeComponent {
             case 'Client': return '🟢 Client';
             case 'TechDebt': return '🟡 Tech Debt';
             case 'RnD': return '🔵 R&D';
+            default: return cat;
         }
     }
 
@@ -142,6 +113,7 @@ export class ReviewFreezeComponent {
             case 'Client': return 'badge-client';
             case 'TechDebt': return 'badge-techdebt';
             case 'RnD': return 'badge-rnd';
+            default: return '';
         }
     }
 
@@ -156,5 +128,4 @@ export class ReviewFreezeComponent {
         ];
         return gradients[index % gradients.length];
     }
->>>>>>> main
 }

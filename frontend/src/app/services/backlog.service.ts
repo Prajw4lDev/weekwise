@@ -33,11 +33,14 @@ export class BacklogService {
     }
 
     /** Load items from the backend/localStorage. */
-    async loadItems(): Promise<void> {
+    async loadItems(): Promise<BacklogItem[]> {
         const stored = localStorage.getItem(this.STORAGE_KEY);
         if (stored) {
-            this._items.set(JSON.parse(stored));
+            const items = JSON.parse(stored);
+            this._items.set(items);
+            return items;
         }
+        return [];
     }
 
     /** Get items filtered by category. */
