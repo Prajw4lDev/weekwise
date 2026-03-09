@@ -1,46 +1,130 @@
-# Weekwise — Premium Weekly Plan Tracker
+# 🗓️ WeekWise — Weekly Plan Tracker
 
-Weekwise is a high-performance weekly planning and progress tracking application built for teams that value focus and execution. It helps team leads (Admins) distribute work based on category budgets and empowers members to commit to their weekly goals.
+**Live Site:** [https://weekwise-api-prajwal.azurewebsites.net](https://weekwise-api-prajwal.azurewebsites.net)
 
-## ✨ Features
+Weekwise is a state-of-the-art, high-performance weekly planning and progress tracking application. Designed for elite engineering teams, it balances administrative control with developer commitment, ensuring every hour counts.
 
-- **Dual Roles**: Admin (Team Lead) and Member.
-- **Weekly Planning Flow**:
-    - **Setup**: Pick team members and define category percentages (Client, Tech Debt, R&D).
-    - **Planning**: Members pick items from the backlog and commit to 30 hours of work.
-    - **Review & Freeze**: Lead checks the team's commitment against the budget and locks the plan.
-    - **Execution**: Members update progress, report hours, and mark tasks as Done or Blocked.
-    - **Closure**: Lead finishes the week, archiving results and clearing the board for the next cycle.
-- **Premium UI**: Dark glassmorphism theme, micro-animations, and responsive design.
-- **Data Portability**: Export and import your team's data as JSON for easy backups.
+---
+
+## 🌟 Key Features
+
+### 🔐 Multi-Role Orchestration
+- **Admin (Team Lead)**: 
+  - Define the squad for the current week.
+  - Set strategic category budgets (**Client**, **Tech Debt**, **R&D**).
+  - Review team commitments against the split.
+  - **Freeze** the plan to lock the mission.
+- **Member**:
+  - Browse the backlog and commit to **30 hours** of high-impact work.
+  - Update real-time progress with notes and status tracking.
+  - Handle over-hours with automatic warnings.
+
+### 🎭 Premium UI/UX
+- **Aesthetic**: Modern dark glassmorphism with smooth CSS transitions.
+- **Dynamic Charts**: Real-time progress visualization using `ng2-charts` and `Chart.js`.
+- **Responsive**: Fully fluid layout that feels premium on all screen sizes.
+
+### 📊 Seeded "Dream Team"
+The system comes pre-populated with a permanent elite team:
+- **Prajwal Dinde** (Lead Admin) 👑
+- **Ajay more** (Member)
+- **Om Patil** (Member)
+- **Yash Gaikwad** (Member)
+- **Jay Sharma** (Member)
+
+---
 
 ## 🛠️ Technology Stack
 
-- **Backend**: .NET 8 Web API, Entity Framework Core, SQLite.
-- **Frontend**: Angular 17+, RxJS Signals, Vanilla CSS.
-- **Tooling**: AutoMapper, JWT Authentication.
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend** | Angular 18+, RxJS Signals, Vanilla CSS |
+| **Backend** | .NET 8 Web API, EF Core |
+| **Database** | SQLite (Persisted `weekwise.db`) |
+| **Auth** | JWT Bearer Tokens & BCrypt Hashing |
+| **Visuals** | Chart.js with `ng2-charts` |
 
-## 🚀 Getting Started
+---
+
+## 🚀 Quick Start (Local Development)
 
 ### Prerequisites
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Node.js & npm](https://nodejs.org/)
+- [Node.js 18+](https://nodejs.org/)
 
-### Backend Setup
-1. Navigate to the backend directory: `cd backend/src/Weekwise.Api`
-2. Update the database (SQLite): `dotnet ef database update`
-3. Run the API: `dotnet run`
-   - The API will be available at `http://localhost:5000` (or as configured in `appsettings.json`).
+### 1. Backend API
+```powershell
+cd backend/src/Weekwise.Api
+dotnet build
+dotnet run
+```
+- API Endpoint: `http://localhost:5066`
+- Swagger UI: `http://localhost:5066/swagger`
 
-### Frontend Setup
-1. Navigate to the frontend directory: `cd frontend`
-2. Install dependencies: `npm install`
-3. Start the dev server: `npm start`
-   - Open your browser at `http://localhost:4200`.
+### 2. Frontend App
+```powershell
+cd frontend
+npm install
+npm start
+```
+- URL: `http://localhost:4200`
 
-## 🧪 Verification
+---
 
-Run the full backend test suite to ensure system integrity:
+## 🔑 Default Credentials
+
+Use these credentials to access the system:
+
+| Role | Username (Email) | Password |
+| :--- | :--- | :--- |
+| **Admin (Prajwal)** | `lead@gmail.com` | `lead` |
+| **Member (Ajay)** | `ajay@gmail.com` | `ajay123` |
+
+---
+
+## 📦 Full-Stack Deployment
+
+To run WeekWise as a unified project where the .NET API serves the Angular frontend:
+
+1. **Build Frontend**:
+   ```powershell
+   cd frontend
+   ng build --configuration production
+   ```
+2. **Setup Backend**:
+   Copy the contents of `frontend/dist/weekwise-frontend/browser/` to `backend/src/Weekwise.Api/wwwroot/`.
+3. **Publish Backend**:
+   ```powershell
+   cd backend/src/Weekwise.Api
+   dotnet publish -c Release
+   ```
+4. **Run**:
+   Navigate to the publish folder and run `Weekwise.Api.exe`. The app will be available on port 5000/5066 serving both API and UI.
+
+---
+
+## 📁 Project Structure
+
+```text
+weekwise/
+├── frontend/               # Angular SPA
+│   ├── src/app/pages/      # Feature modules (Dashboard, Planning, etc.)
+│   └── src/environments/   # Config (Dev vs Prod API)
+├── backend/
+│   ├── src/Weekwise.Core/  # Entities, Interfaces, DTOs
+│   ├── src/Weekwise.Infra/ # DB Context, Repositories, Services
+│   └── src/Weekwise.Api/   # Controllers and Entry Point
+└── README.md
+```
+
+---
+
+## 🧪 Testing
+
+Maintain system integrity by running the suite:
 ```powershell
 dotnet test backend/tests/Weekwise.Tests/Weekwise.Tests.csproj
 ```
+
+---
+
