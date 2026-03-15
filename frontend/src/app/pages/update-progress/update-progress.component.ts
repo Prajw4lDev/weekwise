@@ -1,144 +1,107 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlanService, BacklogService, UserContextService, ProgressService } from '../../services';
-import { WorkCommitment, BacklogItem, ItemCategory, TaskStatus } from '../../models';
+import { PlanService } from '../../services/plan.service';
+import { BacklogService } from '../../services/backlog.service';
+import { UserContextService } from '../../services/user-context.service';
+import { ProgressService } from '../../services/progress.service';
+import { WorkCommitment, BacklogItem, ItemCategory, TaskStatus } from '../../models/models';
 
+interface EditableCommitment extends WorkCommitment {
+    item: BacklogItem;
+    hoursDone: number;
+    status: TaskStatus;
+    notes: string;
+}
+
+/**
+ * Update Progress screen.
+ * Allows members to update hours, status, and notes for their weekly commitments.
+ */
 @Component({
     selector: 'app-update-progress',
     standalone: true,
-    imports: [FormsModule],
+    imports: [CommonModule, FormsModule],
     templateUrl: './update-progress.component.html',
     styleUrl: './update-progress.component.css'
 })
-export class UpdateProgressComponent {
+export class UpdateProgressComponent implements OnInit {
+    protected planService = inject(PlanService);
+    protected backlogService = inject(BacklogService);
+    protected userContext = inject(UserContextService);
+    protected progressService = inject(ProgressService);
 
-    planService = inject(PlanService);
-    backlogService = inject(BacklogService);
-    userContext = inject(UserContextService);
-    progressService = inject(ProgressService);
+    // Reactive State
+    memberCommitments = signal<EditableCommitment[]>([]);
 
-    /** Local form state for each commitment. */
-    formData: Map<string, { hours: number; status: TaskStatus; notes: string }> = new Map();
+    // Computed Values
+    totalCommitted = computed(() =>
+        this.memberCommitments().reduce((sum, c) => sum + c.committedHours, 0)
+    );
 
-    get memberId(): string {
-        return this.userContext.currentUser()?.id ?? '';
+    totalDone = computed(() =>
+        this.memberCommitments().reduce((sum, c) => sum + c.hoursDone, 0)
+    );
+
+    progressPercent = computed(() =>
+        this.totalCommitted() > 0
+            ? Math.round((this.totalDone() / this.totalCommitted()) * 100)
+            : 0
+    );
+
+    ringDashoffset = computed(() => {
+        const circumference = 326.7; // 2 * PI * 52 approx
+        return circumference - (circumference * this.progressPercent() / 100);
+    });
+
+    ngOnInit() {
+        this.loadData();
     }
 
-    get myCommitments(): WorkCommitment[] {
-        return this.planService.getMemberCommitments(this.memberId);
+    loadData() {
+        const memberId = this.userContext.currentUser()?.id;
+        if (!memberId) return;
+
+        const commitments = this.planService.getMemberCommitments(memberId);
+        const editable = commitments.map(c => {
+            const item = this.backlogService.getItemById(c.backlogItemId)!;
+            const progress = this.progressService.getLatestUpdate(c.id);
+            return {
+                ...c,
+                item,
+                hoursDone: this.progressService.getHoursDone(c.id),
+                status: this.progressService.getStatus(c.id),
+                notes: progress?.notes ?? ''
+            } as EditableCommitment;
+        });
+
+        this.memberCommitments.set(editable);
     }
 
-    get totalCommitted(): number {
-        return this.myCommitments.reduce((s, c) => s + c.committedHours, 0);
-    }
-
-    get totalDone(): number {
-        return this.myCommitments.reduce((s, c) => s + this.getHours(c.id), 0);
-    }
-
-    get progressPercent(): number {
-        return this.totalCommitted > 0
-            ? Math.round((this.totalDone / this.totalCommitted) * 100)
-            : 0;
-    }
-
-    /** Get the backlog item for a commitment. */
-    getItem(backlogItemId: string): BacklogItem | undefined {
-        return this.backlogService.getItemById(backlogItemId);
-    }
-
-    /** Get current hours for a commitment */
-    getHours(commitmentId: string): number {
-        if (this.formData.has(commitmentId)) {
-            return this.formData.get(commitmentId)!.hours;
+    async saveAll() {
+        const commitments = this.memberCommitments();
+        for (const c of commitments) {
+            await this.progressService.updateProgress(c.id, c.hoursDone, c.status, c.notes);
         }
-        return this.progressService.getHoursDone(commitmentId);
+        // Refresh data to ensure UI is in sync with service
+        this.loadData();
     }
 
-    /** Get current status */
-    getStatus(commitmentId: string): TaskStatus {
-        if (this.formData.has(commitmentId)) {
-            return this.formData.get(commitmentId)!.status;
-        }
-        return this.progressService.getStatus(commitmentId);
-    }
-
-    /** Get notes */
-    getNotes(commitmentId: string): string {
-        if (this.formData.has(commitmentId)) {
-            return this.formData.get(commitmentId)!.notes;
-        }
-        const latest = this.progressService.getLatestUpdate(commitmentId);
-        return latest?.notes ?? '';
-    }
-
-    /** Track form changes */
-    updateFormField(commitmentId: string, field: 'hours' | 'status' | 'notes', value: any): void {
-
-        if (!this.formData.has(commitmentId)) {
-            this.formData.set(commitmentId, {
-                hours: this.progressService.getHoursDone(commitmentId),
-                status: this.progressService.getStatus(commitmentId),
-                notes: this.progressService.getLatestUpdate(commitmentId)?.notes ?? ''
-            });
-        }
-
-        const data = this.formData.get(commitmentId)!;
-
-        if (field === 'hours') data.hours = value;
-        if (field === 'status') data.status = value;
-        if (field === 'notes') data.notes = value;
-    }
-
-    /** Check over-hours */
-    isOverHours(commitment: WorkCommitment): boolean {
-        return this.getHours(commitment.id) > commitment.committedHours;
-    }
-
-    /** Save progress */
-    saveAll(): void {
-
-        for (const commitment of this.myCommitments) {
-
-            const hours = this.getHours(commitment.id);
-            const status = this.getStatus(commitment.id);
-            const notes = this.getNotes(commitment.id);
-
-            this.progressService.updateProgress(commitment.id, hours, status, notes);
-        }
-
-        this.formData.clear();
-    }
-
-    /** Progress ring offset */
-    get ringDashoffset(): number {
-        const circumference = 2 * Math.PI * 52;
-        return circumference - (circumference * this.progressPercent) / 100;
-    }
-
-    /** Category label */
     getCategoryLabel(cat: ItemCategory): string {
         switch (cat) {
             case 'Client': return '🟢 Client';
             case 'TechDebt': return '🟡 Tech Debt';
             case 'RnD': return '🔵 R&D';
+            default: return cat;
         }
     }
 
-    /** Category CSS class */
     getCategoryClass(cat: ItemCategory): string {
         switch (cat) {
             case 'Client': return 'badge-client';
             case 'TechDebt': return 'badge-techdebt';
             case 'RnD': return 'badge-rnd';
+            default: return '';
         }
     }
-
-    /** Status dropdown */
-    statusOptions: { value: TaskStatus; label: string }[] = [
-        { value: 'NotStarted', label: 'Not Started' },
-        { value: 'InProgress', label: 'In Progress' },
-        { value: 'Done', label: 'Done' },
-        { value: 'Blocked', label: 'Blocked' },
-    ];
 }
