@@ -4,8 +4,7 @@ import { Router } from '@angular/router';
 import { PlanService } from '../../services/plan.service';
 import { TeamService } from '../../services/team.service';
 import { BacklogService } from '../../services/backlog.service';
-import { CategoryBudget, MemberPlanSummary } from '../../models/models';
-import { ItemCategory } from '../../models/enums';
+import { CategoryBudget, MemberPlanSummary, ItemCategory } from '../../models/models';
 
 @Component({
   selector: 'app-review-freeze',

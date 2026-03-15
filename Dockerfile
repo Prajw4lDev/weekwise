@@ -1,6 +1,9 @@
 # Stage 1: Build the Angular frontend
-FROM node:20 AS frontend-build
+FROM node:22 AS frontend-build
 WORKDIR /app/frontend
+
+# Increase memory for the Angular build
+ENV NODE_OPTIONS=--max-old-space-size=2048
 
 # Copy frontend source
 COPY frontend/package.json frontend/package-lock.json ./

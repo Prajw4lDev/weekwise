@@ -1,8 +1,11 @@
-import { MemberRole, ItemCategory, PlanStatus, TaskStatus } from './enums';
-
 /**
- * Weekwise — Core domain models.
+ * Weekwise — Core domain models & Enums.
  */
+
+export type MemberRole = 'Admin' | 'Member';
+export type ItemCategory = 'Client' | 'TechDebt' | 'RnD';
+export type PlanStatus = 'Setup' | 'Planning' | 'Frozen' | 'Completed' | 'Cancelled';
+export type TaskStatus = 'NotStarted' | 'InProgress' | 'Done' | 'Blocked';
 
 /** A member of the team. */
 export interface TeamMember {
