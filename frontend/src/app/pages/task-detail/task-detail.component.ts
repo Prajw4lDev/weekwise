@@ -62,9 +62,9 @@ export class TaskDetailComponent {
         const commitments = this.getCommitmentsForItem(itemId);
         const allUpdates: (ProgressUpdate & { memberName: string })[] = [];
         for (const c of commitments) {
-            const updates = this.progressService.getUpdateHistory(c.id);
-            for (const u of updates) {
-                allUpdates.push({ ...u, memberName: this.getMemberName(c.memberId) });
+            const latest = this.progressService.getLatestUpdate(c.id);
+            if (latest) {
+                allUpdates.push({ ...latest, memberName: this.getMemberName(c.memberId) });
             }
         }
         return allUpdates.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());

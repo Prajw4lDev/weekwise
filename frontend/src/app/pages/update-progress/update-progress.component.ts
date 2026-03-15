@@ -1,11 +1,8 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlanService } from '../../services/plan.service';
-import { BacklogService } from '../../services/backlog.service';
-import { UserContextService } from '../../services/user-context.service';
-import { ProgressService } from '../../services/progress.service';
-import { WorkCommitment, BacklogItem, ItemCategory, TaskStatus } from '../../models/models';
+import { PlanService, BacklogService, UserContextService, ProgressService } from '../../services';
+import { WorkCommitment, BacklogItem, ItemCategory, TaskStatus } from '../../models';
 
 interface EditableCommitment extends WorkCommitment {
     item: BacklogItem;
@@ -26,10 +23,10 @@ interface EditableCommitment extends WorkCommitment {
     styleUrl: './update-progress.component.css'
 })
 export class UpdateProgressComponent implements OnInit {
-    protected planService = inject(PlanService);
-    protected backlogService = inject(BacklogService);
-    protected userContext = inject(UserContextService);
-    protected progressService = inject(ProgressService);
+    private planService = inject(PlanService);
+    private backlogService = inject(BacklogService);
+    private userContext = inject(UserContextService);
+    private progressService = inject(ProgressService);
 
     // Reactive State
     memberCommitments = signal<EditableCommitment[]>([]);

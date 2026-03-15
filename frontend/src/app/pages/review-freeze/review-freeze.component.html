@@ -1,96 +1,48 @@
-<<<<<<< feature/frontend-backend-integration
-<section id="screen-review-freeze" class="animate-fade-up">
+<<section id="screen-review-freeze" class="animate-fade-up">
     <div class="page-header">
         <h2><span class="icon">❄️</span> Review and Freeze the Plan</h2>
         <p class="text-secondary">Finalize the team's work allocation for the week.</p>
     </div>
 
-    <!-- Weekly Allocations Table -->
-    <h3 class="section-title mb-md">Weekly Allocations</h3>
-=======
-<section id="screen-review-freeze">
-    <h2 class="mb-lg"><span class="icon">❄️</span> Review the Team's Plan</h2>
-
-    <!-- Category Summary -->
-    <h3 class="mb-md">Category Summary</h3>
-    <div class="glass-card no-hover mb-lg">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Budget</th>
-                    <th>Claimed</th>
-                    <th>Progress</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (budget of categoryBudgets; track budget.category) {
-                <tr>
-                    <td><span class="badge" [class]="getCategoryClass(budget.category)">{{
-                            getCategoryLabel(budget.category) }}</span></td>
-                    <td>{{ budget.budgetHours }}h</td>
-                    <td>{{ budget.claimedHours }}h</td>
-                    <td>
-                        <div class="flex items-center gap-sm">
-                            <div class="progress-bar-container" style="width:120px;">
-                                <div class="progress-bar-fill" [class]="getProgressColor(getProgressPercent(budget))"
-                                    [style.width.%]="getProgressPercent(budget)"></div>
-                            </div>
-                            <span class="text-secondary" style="font-size:0.8rem;">{{ getProgressPercent(budget)
-                                }}%</span>
-                        </div>
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
+    <!-- Category Distribution Summary -->
+    <h3 class="section-title mb-md">Category Distribution</h3>
+    <div class="grid-3 mb-lg">
+        @for (budget of categoryBudgets; track budget.category) {
+        <div class="glass-card no-hover p-md">
+            <div class="flex justify-between items-center mb-sm">
+                <span class="badge" [ngClass]="getCategoryClass(budget.category)">
+                    {{ getCategoryLabel(budget.category) }}
+                </span>
+                <span class="text-secondary">{{ budget.budgetPercent }}%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" [style.width.%]="(budget.claimedHours / budget.budgetHours) * 100"
+                    [style.background]="getGradient(0)">
+                    <!-- Note: actual gradient might need index, but using 0 for now -->
+                </div>
+            </div>
+            <div class="flex justify-between mt-xs" style="font-size:0.75rem;">
+                <span class="text-muted">{{ budget.claimedHours }}h / {{ budget.budgetHours }}h</span>
+                <span [style.color]="getProgressColor((budget.claimedHours / budget.budgetHours) * 100)">
+                    {{ Math.round((budget.claimedHours / budget.budgetHours) * 100) }}%
+                </span>
+            </div>
+        </div>
+        }
     </div>
 
-    <!-- Member Summary -->
-    <h3 class="mb-md">Member Summary</h3>
->>>>>>> main
+    <!-- Member Plan Summary -->
+    <h3 class="section-title mb-md">Member Summary</h3>
     <div class="glass-card no-hover mb-lg">
         <table class="data-table">
             <thead>
                 <tr>
                     <th>Member</th>
-                    <th>Category</th>
-                    <th>Percentage</th>
-                    <th>Hours</th>
+                    <th>Committed</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-<<<<<<< feature/frontend-backend-integration
-                <tr *ngFor="let alloc of memberAllocations">
-                    <td>
-                        <div class="flex items-center gap-sm">
-                            <div class="avatar"
-                                style="width:24px;height:24px;font-size:0.6rem;background: var(--bg-tertiary);">
-                                {{ alloc.memberName.charAt(0).toUpperCase() }}
-                            </div>
-                            {{ alloc.memberName }}
-                        </div>
-                    </td>
-                    <td>
-                        <span class="badge" [ngClass]="{
-                            'badge-client': alloc.category === 'Client',
-                            'badge-techdebt': alloc.category === 'TechDebt',
-                            'badge-rnd': alloc.category === 'RnD'
-                        }">
-                            {{ alloc.category === 'Client' ? '🟢 Client' : alloc.category === 'TechDebt' ? '🟡 Tech
-                            Debt' : '🔵 R&D' }}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="flex items-center gap-sm">
-                            <div class="progress-bar-container" style="width:60px;">
-                                <div class="progress-bar-fill" [style.width.%]="alloc.percentage"></div>
-                            </div>
-                            <span class="text-secondary" style="font-size:0.8rem;">{{ alloc.percentage }}%</span>
-                        </div>
-                    </td>
-                    <td><strong>{{ alloc.hours }}h</strong></td>
-=======
                 @for (summary of memberSummaries; track summary.member.id; let i = $index) {
                 <tr>
                     <td>
@@ -112,59 +64,35 @@
                             summary.committedHours }}h remaining</span>
                         }
                     </td>
->>>>>>> main
                 </tr>
                 }
             </tbody>
         </table>
     </div>
 
-<<<<<<< feature/frontend-backend-integration
-    <!-- Member Totals Summary -->
-    <h3 class="section-title mb-md">Total Hours per Member</h3>
-    <div class="grid-3 mb-lg">
-        <div class="glass-card no-hover p-md" *ngFor="let s of memberSummaries">
-            <div class="flex justify-between items-center mb-sm">
-                <span class="font-bold">{{ s.member.name }}</span>
-                <span class="badge" [ngClass]="s.isFullyPlanned ? 'badge-success' : 'badge-warning'">
-                    {{ s.committedHours }}h / {{ s.maxHours }}h
-                </span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar-fill" [style.width.%]="(s.committedHours / s.maxHours) * 100"
-                    [ngClass]="s.isFullyPlanned ? 'green' : 'yellow'"></div>
-            </div>
-        </div>
-    </div>
-
     <!-- Validation and Freeze Button -->
-    <div *ngIf="!planService.canFreeze()" class="validation-msg warning mb-md animate-scale-in">
-        <div *ngFor="let issue of planService.getFreezeValidationIssues()">⚠️ {{ issue }}</div>
+    @if (!canFreeze) {
+    <div class="validation-msg warning mb-md animate-scale-in">
+        @for (issue of freezeIssues; track issue) {
+        <div>⚠️ {{ issue }}</div>
+        }
     </div>
+    }
 
     <div class="flex items-center gap-md">
-        <button (click)="freezePlan()" class="btn btn-primary" [disabled]="!planService.canFreeze()"
-            [style.opacity]="planService.canFreeze() ? 1 : 0.5"
-            [style.cursor]="planService.canFreeze() ? 'pointer' : 'not-allowed'"
-            style="padding:14px 32px;font-size:1rem;">
+        @if (canFreeze) {
+        <div class="validation-msg success mb-md">✅ All members are fully planned! Ready to freeze.</div>
+        <button (click)="freezePlan()" class="btn btn-primary" style="padding:14px 32px;font-size:1rem;">
             ❄️ Freeze Plan
         </button>
-        <span class="text-secondary" *ngIf="!planService.canFreeze()">
+        } @else {
+        <button class="btn btn-primary" style="opacity:0.5;cursor:not-allowed;padding:14px 32px;font-size:1rem;"
+            disabled>
+            ❄️ Freeze Plan
+        </button>
+        <span class="text-secondary">
             Plan cannot be frozen until all members are fully planned.
         </span>
+        }
     </div>
-=======
-    <!-- Validation & Freeze -->
-    @if (!canFreeze) {
-    @for (issue of freezeIssues; track issue) {
-    <div class="validation-msg warning mb-sm">⚠️ {{ issue }}</div>
-    }
-    <button class="btn btn-primary" style="opacity:0.5;cursor:not-allowed;padding:14px 32px;font-size:1rem;" disabled>❄️
-        Freeze Plan</button>
-    } @else {
-    <div class="validation-msg success mb-md">✅ All members are fully planned! Ready to freeze.</div>
-    <button class="btn btn-primary" style="padding:14px 32px;font-size:1rem;" (click)="freezePlan()" id="freeze-btn">❄️
-        Freeze Plan</button>
-    }
->>>>>>> main
-</section>
+    </section>

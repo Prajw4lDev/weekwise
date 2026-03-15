@@ -1,6 +1,4 @@
-# 🗓️ WeekWise — Weekly Plan Tracker
-
-**Live Site:** [https://weekwise-api-prajwal.azurewebsites.net](https://weekwise-api-prajwal.azurewebsites.net)
+# Weekwise — Premium Weekly Plan Tracker
 
 Weekwise is a state-of-the-art, high-performance weekly planning and progress tracking application. Designed for elite engineering teams, it balances administrative control with developer commitment, ensuring every hour counts.
 
@@ -125,6 +123,3 @@ Maintain system integrity by running the suite:
 ```powershell
 dotnet test backend/tests/Weekwise.Tests/Weekwise.Tests.csproj
 ```
-
----
-

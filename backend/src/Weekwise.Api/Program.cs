@@ -11,7 +11,6 @@ using Weekwise.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Dynamic port configuration for Render
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 

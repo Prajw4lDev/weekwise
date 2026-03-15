@@ -3,10 +3,11 @@ services:
     name: weekwise
     env: docker
     plan: free
-    dockerCommand: "" 
+    dockerCommand: "" # Uses the ENTRYPOINT from the Dockerfile
     healthCheckPath: /
     envVars:
       - key: PORT
         value: 8080
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+    # Note: On the free plan, SQLite database will reset on deployments.
