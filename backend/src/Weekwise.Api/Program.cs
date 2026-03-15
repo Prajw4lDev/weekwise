@@ -11,11 +11,10 @@ using Weekwise.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ---------------------------------------------------------------------------
-// Services
-// ---------------------------------------------------------------------------
+// Dynamic port configuration for Render
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-// Controllers + JSON options (camelCase, string enums)
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -23,19 +22,21 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-// Swagger / OpenAPI with JWT support
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Weekwise API", Version = "v1" });
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Description = "JWT Authorization header using Bearer token",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
+
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -52,7 +53,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Authentication Configuration
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -64,11 +64,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+            )
         };
     });
 
-// CORS — allow everything for easier local development/testing
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -79,11 +80,9 @@ builder.Services.AddCors(options =>
     });
 });
 
-// EF Core — SQLite
 builder.Services.AddDbContext<WeekwiseDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Repositories
 builder.Services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
 builder.Services.AddScoped<IBacklogItemRepository, BacklogItemRepository>();
 builder.Services.AddScoped<IWeeklyPlanRepository, WeeklyPlanRepository>();
@@ -91,59 +90,48 @@ builder.Services.AddScoped<IWorkCommitmentRepository, WorkCommitmentRepository>(
 builder.Services.AddScoped<IProgressUpdateRepository, ProgressUpdateRepository>();
 builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
 
-// AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
-// Services
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IInvitationService, InvitationService>();
-builder.Services.AddScoped<ITeamMemberService, Weekwise.Infrastructure.Services.TeamMemberService>();
-builder.Services.AddScoped<IBacklogItemService, Weekwise.Infrastructure.Services.BacklogItemService>();
-builder.Services.AddScoped<IWeeklyPlanService, Weekwise.Infrastructure.Services.WeeklyPlanService>();
-builder.Services.AddScoped<IProgressService, Weekwise.Infrastructure.Services.ProgressService>();
-builder.Services.AddScoped<IDashboardService, Weekwise.Infrastructure.Services.DashboardService>();
-builder.Services.AddScoped<IDataService, Weekwise.Infrastructure.Services.DataService>();
+builder.Services.AddScoped<ITeamMemberService, TeamMemberService>();
+builder.Services.AddScoped<IBacklogItemService, BacklogItemService>();
+builder.Services.AddScoped<IWeeklyPlanService, WeeklyPlanService>();
+builder.Services.AddScoped<IProgressService, ProgressService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IDataService, DataService>();
 
 var app = builder.Build();
 
-// ---------------------------------------------------------------------------
-// Middleware pipeline
-// ---------------------------------------------------------------------------
-
-// Swagger (available in all environments for now)
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Weekwise API v1");
-    c.RoutePrefix = "swagger";
 });
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseCors("AllowAll");
-
-// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapFallbackToFile("index.html");
 
-// Health check endpoint
-app.MapGet("/", () => Results.Ok(new { status = "Weekwise API is running", version = "1.0.0" }));
-
-// ───────────────────────────────────────────────────────────────────────────
-// Initialize Database
-// ───────────────────────────────────────────────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<WeekwiseDbContext>();
     context.Database.EnsureCreated();
 
-    // Force seed demo data
-    var dataService = scope.ServiceProvider.GetRequiredService<IDataService>();
-    await dataService.SeedDemoDataAsync();
+    // Only seed if there are no members
+    if (!await context.TeamMembers.AnyAsync())
+    {
+        var dataService = scope.ServiceProvider.GetRequiredService<IDataService>();
+        await dataService.SeedDemoDataAsync();
+    }
 }
 
 app.Run();
 
-// Make the Program class accessible for integration tests
 public partial class Program { }
